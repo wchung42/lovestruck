@@ -26,30 +26,42 @@ raylib::Vector2 TargetSpawner::calculateSpawnPosition(const raylib::Texture2DUnm
 	return spawnPos;
 }
 
-std::shared_ptr<Target> TargetSpawner::spawnTarget()
+void TargetSpawner::spawnTarget(std::unique_ptr<std::vector<std::unique_ptr<Target>>>& targets)
 {
 	// Get random target type to spawn
 	// 60% small, 30% medium, 10% large
 	std::uniform_int_distribution<int> distSpawn(0, 100);
 	int num = distSpawn(m_mt);
-	std::shared_ptr<Target> target {};
+	std::unique_ptr<Target> target {};
 	if (num <= 59)
 	{	
-		target = std::make_shared<TargetSmall>(calculateSpawnPosition(m_textures[0], 0.3f), m_textures[0], m_textures[3]);
+		target = std::make_unique<TargetSmall>(
+			calculateSpawnPosition(m_textures[0], 0.3f),
+			m_textures[0],
+			m_textures[3]
+		);
 	}
 	else if (num >= 60 && num <= 89)
-		target = std::make_shared<TargetMedium>(calculateSpawnPosition(m_textures[1], 0.6f), m_textures[1], m_textures[3]);
+		target = std::make_unique<TargetMedium>(
+			calculateSpawnPosition(m_textures[1], 0.6f),
+			m_textures[1],
+			m_textures[3]
+		);
 	else if (num >= 90)
-		target = std::make_shared<TargetLarge>(calculateSpawnPosition(m_textures[2], 1.0f), m_textures[2], m_textures[3]);
-	return target;
+		target = std::make_unique<TargetLarge>(
+			calculateSpawnPosition(m_textures[2], 1.0f),
+			m_textures[2],
+			m_textures[3]
+		);
+	targets->push_back(std::move(target));
 }
 
-void TargetSpawner::update(float deltaTime, std::unique_ptr<std::vector<std::shared_ptr<Target>>>& targets)
+void TargetSpawner::update(float deltaTime, std::unique_ptr<std::vector<std::unique_ptr<Target>>>& targets)
 {
 	m_timer += deltaTime;
 
 	// Increase spawn rate every 15 seconds
-	if (m_timer > 15.0f)
+	if (m_timer > 10.0f)
 	{
 		m_spawnRate *= 0.9;
 		std::cout << m_spawnRate << '\n';
@@ -70,7 +82,7 @@ void TargetSpawner::update(float deltaTime, std::unique_ptr<std::vector<std::sha
 			spawnAmount = 3;
 		
 		for (int i {0}; i < spawnAmount; ++i)
-			targets->push_back(spawnTarget());
+			spawnTarget(targets);
 		
 		m_spawnTimer = 0.0f;
 	}

@@ -57,23 +57,7 @@ void GameplayScreen::InitScreen()
         heartTextures										// Target textures
     );
     // Initialize targets vector
-    m_targets = std::make_unique<std::vector<std::shared_ptr<Target>>>();
-
-	// Initialize clouds vector
-	//m_clouds = std::make_unique<std::vector<std::unique_ptr<Cloud>>>();
-	// Initialize clouds
-	/*std::vector<raylib::Vector2> cloudPositions;
-	for (int xPos {0}; xPos < GetScreenWidth(); xPos += 256)
-	{
-		cloudPositions.push_back(raylib::Vector2 {static_cast<float>(xPos), static_cast<float>(GetScreenHeight() - 100)});
-	}*/
-	
-	
-	/*for (auto& position : cloudPositions)
-	{
-		std::unique_ptr<Cloud> cloud = std::make_unique<Cloud>(position, m_textures[8]);
-		m_clouds->push_back(std::move(cloud));
-	}*/
+    m_targets = std::make_unique<std::vector<std::unique_ptr<Target>>>();
 	
 	raylib::Vector2 cloudPosition1 {
 		0.0f,
@@ -84,8 +68,6 @@ void GameplayScreen::InitScreen()
 		static_cast<float>(GetScreenWidth()),
 		static_cast<float>(GetScreenHeight() - m_textures[8].height / 2)
 	};
-	/*m_clouds->push_back(std::move(std::make_unique<Cloud>(cloudPosition1, m_textures[8])));
-	m_clouds->push_back(std::move(std::make_unique<Cloud>(cloudPosition2, m_textures[8])));*/
 	m_clouds.push_back(Cloud(cloudPosition1, m_textures[8]));
 	m_clouds.push_back(Cloud(cloudPosition2, m_textures[8]));
 }
@@ -93,14 +75,6 @@ void GameplayScreen::InitScreen()
 // Gameplay Screen Update logic
 void GameplayScreen::UpdateScreen(float deltaTime)
 {
-	/*for (auto itCloud = m_clouds->begin(); itCloud != m_clouds->end();)
-	{
-		if ((*itCloud)->getPos().x + (*itCloud)->getWidth() < 0)
-			(*itCloud)->set
-		else
-			++itCloud;
-	}*/
-
 	if (IsKeyPressed(KEY_SPACE))
 	{
 		std::shared_ptr<Arrow> arrowShot = m_player->shoot();
@@ -229,6 +203,16 @@ void GameplayScreen::DrawScreen()
 		3.0f
 	);
 	scoreText.Draw(raylib::Vector2 {static_cast<float>((GetScreenWidth() / 2) - (scoreText.Measure() / 2)), 25});
+
+	// FPS counter
+	/*raylib::Text fpsText(
+		std::to_string(GetFPS()),
+		20.0f,
+		RED,
+		GetFontDefault(),
+		3.0f
+	);
+	fpsText.Draw(raylib::Vector2 {10.0f, 10.0f});*/
 }
 
 // Gameplay Screen Unload logic

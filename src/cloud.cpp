@@ -14,7 +14,10 @@ void Cloud::update(float deltaTime)
 {
 	// Move cloud back to right side of screen if it goes out of left side screen
 	if (m_pos.x + m_texture.GetWidth() < 0)
-		m_pos.x = GetScreenWidth();
+	{
+		float offset = std::abs((m_pos.x + m_texture.GetWidth()) - 0.0f);
+		m_pos.x = GetScreenWidth() - offset;
+	}
 
 	m_pos.x -= 100.0f * deltaTime;
 }
