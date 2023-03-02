@@ -41,7 +41,7 @@ void GameplayScreen::InitScreen()
     m_arrows = std::make_unique<std::vector<std::shared_ptr<Arrow>>>();
 
     // TODO: Increase spawnRate as game progresses
-    int targetSpawnRate {2};
+    float targetSpawnRate {2.0f};
     std::vector<raylib::Texture2DUnmanaged> heartTextures {
 		m_textures[4],
 		m_textures[5],
@@ -50,7 +50,6 @@ void GameplayScreen::InitScreen()
 	};
     m_spawner = std::make_unique<TargetSpawner>(
         targetSpawnRate,									// Spawn rate
-        GetScreenWidth(),									// Spawn x position
         m_player->getHeight() / 2,							// Min y player is able to shoot
         GetScreenHeight() - (m_player->getHeight() / 2),	// Max y player is able to shoot
         heartTextures										// Target textures
