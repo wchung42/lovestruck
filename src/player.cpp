@@ -149,7 +149,7 @@ Rectangle Player::getCollisionRec()
 {
 	float scaledWidth {m_width * m_scale};
 	float scaledHeight {m_height * m_scale};
-	float xOffsetMultiplier {0.2f};
+	float xOffsetMultiplier {0.35f};
 	float yOffsetMultiplier {0.1f};
 	float xOffset {scaledWidth * xOffsetMultiplier};
 	float yOffset {scaledWidth * yOffsetMultiplier};

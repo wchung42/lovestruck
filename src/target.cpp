@@ -2,7 +2,7 @@
 #include <iostream>
 
 Target::Target(
-	Vector2 pos,
+	raylib::Vector2 pos,
 	raylib::Texture2DUnmanaged& aliveTexture,
 	raylib::Texture2DUnmanaged& endingTexture
 ) : m_pos(pos), m_texture(aliveTexture),
@@ -49,25 +49,26 @@ void Target::draw()
 		static_cast<float>(m_width),
 		static_cast<float>(m_height)
 	};
-	Rectangle dest {
+	raylib::Rectangle dest {
 		m_pos.x,
 		m_pos.y,
 		static_cast<float>(m_width) * m_scale,
 		static_cast<float>(m_height) * m_scale
 	};
-	m_texture.Draw(source, dest, Vector2 {}, 0.0f, WHITE);
+	m_texture.Draw(source, dest, raylib::Vector2 {}, 0.0f, WHITE);
 
-	if (m_collisionsOn)
-		DrawRectangleLinesEx(getCollisionRec(), 1.0f, RED);
+	/*if (m_collisionsOn)
+		DrawRectangleLinesEx(getCollisionRec(), 1.0f, RED);*/
 }
 
 Rectangle Target::getCollisionRec()
 {
 	float scaledWidth {m_width * m_scale};
 	float scaledHeight {m_height * m_scale};
-	float offsetMultiplier {0.15f};
-	float xOffset {scaledWidth * offsetMultiplier};
-	float yOffset {scaledWidth * offsetMultiplier};
+	float xOffsetMultiplier {0.2f};
+	float yOffsetMultiplier {0.1f};
+	float xOffset {scaledWidth * xOffsetMultiplier};
+	float yOffset {scaledWidth * yOffsetMultiplier};
 	raylib::Rectangle rec {
 		m_pos.x + xOffset,
 		m_pos.y + yOffset,

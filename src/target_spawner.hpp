@@ -27,6 +27,7 @@ public:
 		std::vector<raylib::Texture2DUnmanaged>& textures
 	);
 	~TargetSpawner();
+	raylib::Vector2 calculateSpawnPosition(const raylib::Texture2DUnmanaged& texture);
 	std::shared_ptr<Target> spawnTarget();
 	void update(float deltaTime, std::unique_ptr<std::vector<std::shared_ptr<Target>>>& targets);
 };

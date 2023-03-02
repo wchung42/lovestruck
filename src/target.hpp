@@ -1,12 +1,12 @@
 #pragma once
 
 #include "raylib.h"
-#include "./include/raylib-cpp.hpp"
+#include "include/raylib-cpp.hpp"
 
 class Target
 {
 protected:
-	Vector2 m_pos {};
+	raylib::Vector2 m_pos {};
 	raylib::Texture2DUnmanaged m_texture {}; // Current texture
 	raylib::Texture2DUnmanaged m_aliveTexture {};
 	raylib::Texture2DUnmanaged m_endingTexture {};
@@ -26,7 +26,7 @@ protected:
 	
 public:
 	Target(
-		Vector2 pos,
+		raylib::Vector2 pos,
 		raylib::Texture2DUnmanaged& liveTexture,
 		raylib::Texture2DUnmanaged& endTexture
 	);

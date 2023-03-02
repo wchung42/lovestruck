@@ -24,11 +24,3 @@ void TargetLarge::onHit()
 	Target::onHit();
 	this->m_frame++;
 }
-
-//void TargetLg::update(float deltaTime)
-//{
-//	if (m_health == 0)
-//		m_readyToDelete = true;
-//	else
-//		Target::update(deltaTime);
-//}

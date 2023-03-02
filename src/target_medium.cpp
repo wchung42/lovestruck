@@ -23,18 +23,3 @@ void TargetMedium::onHit()
 	Target::onHit();
 	this->m_frame++;
 }
-
-//void TargetMd::update(float deltaTime)
-//{
-//	if (m_health == 0)
-//		//m_readyToDelete = true;
-//	{
-//		m_runningTime += deltaTime;
-//		if (m_runningTime >= m_updateTime)
-//		{
-//			m_readyToDelete = true;
-//		}
-//	}
-//	else
-//		Target::update(deltaTime);
-//}

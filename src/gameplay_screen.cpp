@@ -49,11 +49,11 @@ void GameplayScreen::InitScreen()
 		m_textures[7]
 	};
     m_spawner = std::make_unique<TargetSpawner>(
-        targetSpawnRate,
-        GetScreenWidth(),
-        m_player->getHeight() / 2, 
-        GetScreenHeight() - (m_player->getHeight() / 2),
-        heartTextures
+        targetSpawnRate,									// Spawn rate
+        GetScreenWidth(),									// Spawn x position
+        m_player->getHeight() / 2,							// Min y player is able to shoot
+        GetScreenHeight() - (m_player->getHeight() / 2),	// Max y player is able to shoot
+        heartTextures										// Target textures
     );
     // Initialize targets vector
     m_targets = std::make_unique<std::vector<std::shared_ptr<Target>>>();
@@ -174,12 +174,15 @@ void GameplayScreen::DrawScreen()
 		target->draw();
 	}
 
-    // TODO: Draw GAMEPLAY screen here!
-    /*DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), PURPLE);
-    raylib::Vector2 titlePosition {20, 10};
-    raylib::DrawText("GAMEPLAY SCREEN", titlePosition.GetX(), titlePosition.GetY(), 20, MAROON);
-    raylib::Vector2 instructionPosition {120, 220};
-    raylib::DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", instructionPosition.GetX(), instructionPosition.GetY(), 30, MAROON);*/
+    // Draw score
+	raylib::Text scoreText(
+		std::to_string(m_score),
+		75.0f,
+		BLACK,
+		GetFontDefault(),
+		3.0f
+	);
+	scoreText.Draw(raylib::Vector2 {static_cast<float>((GetScreenWidth() / 2) - (scoreText.Measure() / 2)), 25});
 }
 
 // Gameplay Screen Unload logic
