@@ -145,6 +145,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\arrow.cpp" />
+    <ClCompile Include="src\cloud.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\ending_screen.cpp" />
     <ClCompile Include="src\gameplay_screen.cpp" />
@@ -162,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\arrow.hpp" />
+    <ClInclude Include="src\cloud.hpp" />
     <ClInclude Include="src\ending_screen.hpp" />
     <ClInclude Include="src\game.hpp" />
     <ClInclude Include="src\gameplay_screen.hpp" />

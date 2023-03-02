@@ -60,6 +60,9 @@
     <ClCompile Include="src\target_medium.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\cloud.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\include\AudioDevice.hpp">
@@ -216,6 +219,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\target_medium.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cloud.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

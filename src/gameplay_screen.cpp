@@ -2,6 +2,7 @@
 #include "./include/raylib-cpp.hpp"
 #include "screen.hpp"
 #include "gameplay_screen.hpp"
+#include "cloud.hpp"
 #include <iostream>
 
 //----------------------------------------------------------------------------------
@@ -20,7 +21,8 @@ void GameplayScreen::InitScreen()
 		"./src/resources/textures/hearts_spritesheet_01.png",
 		"./src/resources/textures/hearts_spritesheet_02.png",
 		"./src/resources/textures/hearts_spritesheet_03.png",
-		"./src/resources/textures/heart_ending.png"
+		"./src/resources/textures/heart_ending.png",
+		"./src/resources/textures/cloud_full.png"
     }, m_textures);
 
 	// TODO: Load music
@@ -56,11 +58,49 @@ void GameplayScreen::InitScreen()
     );
     // Initialize targets vector
     m_targets = std::make_unique<std::vector<std::shared_ptr<Target>>>();
+
+	// Initialize clouds vector
+	//m_clouds = std::make_unique<std::vector<std::unique_ptr<Cloud>>>();
+	// Initialize clouds
+	/*std::vector<raylib::Vector2> cloudPositions;
+	for (int xPos {0}; xPos < GetScreenWidth(); xPos += 256)
+	{
+		cloudPositions.push_back(raylib::Vector2 {static_cast<float>(xPos), static_cast<float>(GetScreenHeight() - 100)});
+	}*/
+	
+	
+	/*for (auto& position : cloudPositions)
+	{
+		std::unique_ptr<Cloud> cloud = std::make_unique<Cloud>(position, m_textures[8]);
+		m_clouds->push_back(std::move(cloud));
+	}*/
+	
+	raylib::Vector2 cloudPosition1 {
+		0.0f,
+		static_cast<float>(GetScreenHeight() - m_textures[8].height / 2)
+	};
+	
+	raylib::Vector2 cloudPosition2 {
+		static_cast<float>(GetScreenWidth()),
+		static_cast<float>(GetScreenHeight() - m_textures[8].height / 2)
+	};
+	/*m_clouds->push_back(std::move(std::make_unique<Cloud>(cloudPosition1, m_textures[8])));
+	m_clouds->push_back(std::move(std::make_unique<Cloud>(cloudPosition2, m_textures[8])));*/
+	m_clouds.push_back(Cloud(cloudPosition1, m_textures[8]));
+	m_clouds.push_back(Cloud(cloudPosition2, m_textures[8]));
 }
 
 // Gameplay Screen Update logic
 void GameplayScreen::UpdateScreen(float deltaTime)
 {
+	/*for (auto itCloud = m_clouds->begin(); itCloud != m_clouds->end();)
+	{
+		if ((*itCloud)->getPos().x + (*itCloud)->getWidth() < 0)
+			(*itCloud)->set
+		else
+			++itCloud;
+	}*/
+
 	if (IsKeyPressed(KEY_SPACE))
 	{
 		std::shared_ptr<Arrow> arrowShot = m_player->shoot();
@@ -136,6 +176,10 @@ void GameplayScreen::UpdateScreen(float deltaTime)
 	/* Update game objects */
 	/////////////////////////
 
+	// Update clouds
+	for (auto& cloud : m_clouds)
+		cloud.update(deltaTime);
+
 	// Update player
 	m_player->update(deltaTime);
 
@@ -158,6 +202,9 @@ void GameplayScreen::UpdateScreen(float deltaTime)
 // Gameplay Screen Draw logic
 void GameplayScreen::DrawScreen()
 {
+	for (auto& cloud : m_clouds)
+		cloud.draw();
+
 	// Draw player
 	m_player->draw();
 
