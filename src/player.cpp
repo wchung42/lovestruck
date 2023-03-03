@@ -6,21 +6,20 @@
 #include <iostream>
 
 Player::Player(
-	raylib::Texture2DUnmanaged& playerTexture,
+	raylib::Texture2DUnmanaged& playerAliveTexture,
+	raylib::Texture2DUnmanaged& playerDeadTexture,
 	raylib::Texture2DUnmanaged& arrowTexture,
 	raylib::Texture2DUnmanaged& bowLoadedTexture,
 	raylib::Texture2DUnmanaged& bowNotLoadedTexture,
-	int maxFrames, float updateTime)
+	int maxFrames, float updateTime
+)	:	m_playerTexture(playerAliveTexture), m_playerAliveTexture(playerAliveTexture),
+		m_playerDeadTexture(playerDeadTexture), m_arrowTexture(arrowTexture),
+		m_bowLoadedTexture(bowLoadedTexture), m_bowNotLoadedTexture(bowNotLoadedTexture),
+		m_maxFrames(maxFrames), m_updateTime(updateTime)
 {
-	m_playerTexture = playerTexture;
-	m_arrowTexture = arrowTexture;
-	m_bowLoadedTexture = bowLoadedTexture;
-	m_bowNotLoadedTexture = bowNotLoadedTexture;
-	m_maxFrames = maxFrames;
-	m_updateTime = updateTime;
-	m_width = playerTexture.width / m_maxFrames;
-	m_height = playerTexture.height;
-	m_pos = {0.0f, (GetScreenHeight() * 0.5f) - (m_height * m_scale * 0.5f)};
+	m_width = m_playerTexture.width / m_maxFrames;
+	m_height = m_playerTexture.height;
+	m_pos = raylib::Vector2 {0.0f, (GetScreenHeight() * 0.5f) - (m_height * m_scale * 0.5f)};
 
 	float arrowXOffset {0.4f};
 	float arrowYOffset {0.38f};
@@ -35,6 +34,8 @@ Player::~Player() {}
 
 void Player::update(float deltaTime)
 {
+	//m_playerTexture = m_alive ? m_playerAliveTexture : m_playerDeadTexture;
+
 	// Update animation
 	m_runningTime += deltaTime;
 	if (m_runningTime >= m_updateTime)
@@ -44,27 +45,36 @@ void Player::update(float deltaTime)
 		if (m_frame > m_maxFrames)
 			m_frame = 0;
 	}
-
-	// Reload if player has no arrow and fireTimer > fireRate
-	if (!m_hasArrow)
+	
+	if (!m_alive)
 	{
-		if (m_fireTimer >= m_fireRate)
+		m_playerTexture = m_playerDeadTexture;
+
+		// Move player downwards until it leaves the screen on player death
+		if (m_pos.y >= GetScreenHeight())
+			m_readyForEndScreen = true;
+
+		m_pos.y += 300.0f * deltaTime;
+	}
+	else
+	{
+		// Reload if player has no arrow and fireTimer > fireRate
+		if (!m_hasArrow)
 		{
-			this->reload();
-			m_fireTimer = 0.0f;
+			if (m_fireTimer >= m_fireRate)
+			{
+				this->reload();
+				m_fireTimer = 0.0f;
+			}
+			else
+				m_fireTimer += deltaTime;
 		}
-		else
-			m_fireTimer += deltaTime;
-	}
 
-	// Update player position on W/UP and S/DOWN keypress
-	if ((IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) && m_pos.y > 0)
-	{
-		m_pos.y -= m_velocity;
-	}
-	else if ((IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) && m_pos.y + (m_height * m_scale) < GetScreenHeight())
-	{
-		m_pos.y += m_velocity;
+		// Update player position on W/UP and S/DOWN 
+		if ((IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) && m_pos.y > 0)
+			m_pos.y -= m_velocity;
+		else if ((IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) && m_pos.y + (m_height * m_scale) < GetScreenHeight())
+			m_pos.y += m_velocity;
 	}
 
 	// Update arrow position
@@ -78,6 +88,7 @@ void Player::update(float deltaTime)
 		};
 		m_arrow->setPos(arrowPos);
 	}
+	
 }
 
 void Player::draw()
@@ -97,7 +108,7 @@ void Player::draw()
 	m_playerTexture.Draw(source, dest, raylib::Vector2 {}, 0.0f, raylib::WHITE);
 	
 	//// Draw collision rectangle
-	//DrawRectangleLinesEx(this->getCollisionRec(), 1.0f, RED);
+	DrawRectangleLinesEx(this->getCollisionRec(), 1.0f, RED);
 	////
 	
 	// Draw bow and arrow

@@ -10,7 +10,7 @@
 class TargetSpawner
 {
 private:
-	float m_spawnRate {2.0f};
+	float m_spawnRate {1.75f};
 	float m_spawnTimer {};
 	int m_minY {};
 	int m_maxY {};

@@ -14,7 +14,10 @@ private:
 	float m_velocity {600.0f};
 	bool isFired {};
 public:
-	Arrow(raylib::Vector2, raylib::Texture2DUnmanaged& arrowTexture);
+	Arrow(
+		raylib::Vector2,
+		raylib::Texture2DUnmanaged& arrowTexture
+	);
 	~Arrow();
 	Vector2 getPos() const { return m_pos; }
 	void setPos(Vector2 pos) { m_pos = pos; }

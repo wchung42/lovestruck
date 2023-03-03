@@ -27,12 +27,13 @@ void Screen::UnloadScreen()
 	// Unload screen variables
 }
 
-void Screen::initializeTextures(const std::vector<std::string>& texturePaths, std::vector<raylib::Texture2DUnmanaged>& textures)
+void Screen::initializeTextures(
+	const std::vector<std::string>& texturePaths,
+	std::vector<raylib::Texture2DUnmanaged>& textures)
 {
 	// Load textures into GPU
 	for (auto& path : texturePaths)
 	{
-		std::cout << path << '\n';
 		raylib::Texture2DUnmanaged texture(path);
 		textures.push_back(texture);
 	}
@@ -41,5 +42,16 @@ void Screen::initializeTextures(const std::vector<std::string>& texturePaths, st
 	for (auto& texture : textures)
 	{
 		SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
+	}
+}
+
+void Screen::initializeSounds(
+	const std::vector<std::string>& soundPaths,
+	std::vector<raylib::Sound>& sounds)
+{
+	for (auto& path : soundPaths)
+	{
+		//raylib::Sound sound(path);
+		sounds.push_back(raylib::Sound::Sound(path));
 	}
 }

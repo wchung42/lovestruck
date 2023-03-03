@@ -22,6 +22,10 @@ private:
 	int m_transFromScreen {-1};
 	std::unique_ptr<Screen> m_screen;
 	GameScreen m_transToScreen = UNKNOWN;
+	raylib::AudioDevice m_audio;
+	raylib::Music m_backgroundMusic;
+	raylib::Sound m_openingTransitionSound;
+	raylib::Sound m_endingTransitionSound;
 public:
 	Game();
 	~Game();
