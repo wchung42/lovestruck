@@ -1,7 +1,7 @@
 #pragma once
 
 #include "raylib.h"
-#include "./include/raylib-cpp.hpp"
+#include "include/raylib-cpp.hpp"
 #include "target.hpp"
 #include <memory>
 #include <vector>
@@ -10,24 +10,23 @@
 class TargetSpawner
 {
 private:
-	int m_spawnRate {3};
-	int m_windowWidth {};
+	float m_spawnRate {1.75f};
+	float m_spawnTimer {};
 	int m_minY {};
 	int m_maxY {};
-	float m_spawnTimer {0.0f};
+	float m_timer {};
 	std::vector<raylib::Texture2DUnmanaged> m_textures;
 
 	std::mt19937 m_mt;
 public:
 	TargetSpawner(
-		int spawnRate,
-		int windowWidth,
+		float spawnRate,
 		int minY,
 		int maxY,
 		std::vector<raylib::Texture2DUnmanaged>& textures
 	);
 	~TargetSpawner();
-	raylib::Vector2 calculateSpawnPosition(const raylib::Texture2DUnmanaged& texture);
-	std::shared_ptr<Target> spawnTarget();
-	void update(float deltaTime, std::unique_ptr<std::vector<std::shared_ptr<Target>>>& targets);
+	raylib::Vector2 calculateSpawnPosition(const raylib::Texture2DUnmanaged& texture, float scale);
+	void spawnTarget(std::unique_ptr<std::vector<std::unique_ptr<Target>>>& targets);
+	void update(float deltaTime, std::unique_ptr<std::vector<std::unique_ptr<Target>>>& targets);
 };

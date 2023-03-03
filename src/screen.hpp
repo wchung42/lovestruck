@@ -27,5 +27,9 @@ public:
 		const std::vector<std::string>& texturePaths,
 		std::vector<raylib::Texture2DUnmanaged>& textures
 	);
+	void initializeSounds(
+		const std::vector<std::string>& soundPaths,
+		std::vector<raylib::Sound>& sounds
+	);
 
 };

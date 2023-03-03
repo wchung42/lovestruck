@@ -27,6 +27,13 @@ void Game::Initialize()
     m_window.SetTargetFPS(m_targetFPS);       // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
+    // Load music
+    m_backgroundMusic = raylib::Music("./src/resources/sfx/music/music.mp3");
+    m_backgroundMusic.SetLooping(true);
+
+    // Load transition sounds
+    m_openingTransitionSound = raylib::Sound::Sound("./src/resources/sfx/gameplay_opening_transition.mp3");
+    m_endingTransitionSound = raylib::Sound::Sound("./src/resources/sfx/gameplay_ending_transition.mp3");
 }
 
 void Game::RunLoop()
@@ -41,11 +48,21 @@ void Game::RunLoop()
 
 void Game::Shutdown()
 {
+    // Unload resources
+    m_audio.Close();
+    m_openingTransitionSound.Unload();
+    m_endingTransitionSound.Unload();
 	m_window.Close();
 }
 
 void Game::UpdateGame(float deltaTime)
 {
+    if (m_currentScreen != LOGO)
+        m_backgroundMusic.Play();
+
+    // Update music
+    m_backgroundMusic.Update();
+
 	// Update game variables
     if (m_onTransition)
     {
@@ -59,13 +76,22 @@ void Game::UpdateGame(float deltaTime)
     {
         case LOGO:
         {
-            if (nextScreen) TransitionToScreen(TITLE);
+            if (nextScreen) 
+                TransitionToScreen(TITLE);
 
         } break;
         case TITLE:
         {
-            if (nextScreen == 1) TransitionToScreen(OPTIONS);
-            else if (nextScreen == 2) TransitionToScreen(GAMEPLAY);
+            if (nextScreen == 1)
+            {
+                m_openingTransitionSound.Play();
+                TransitionToScreen(OPTIONS);
+            }
+            else if (nextScreen == 2)
+            {
+                m_openingTransitionSound.Play();
+                TransitionToScreen(GAMEPLAY);
+            }
 
         } break;
         case OPTIONS:
@@ -75,7 +101,11 @@ void Game::UpdateGame(float deltaTime)
         } break;
         case GAMEPLAY:
         {
-            if (nextScreen) TransitionToScreen(ENDING);
+            if (nextScreen)
+            {
+                m_endingTransitionSound.Play();
+                TransitionToScreen(ENDING);
+            }
             //else if (FinishGameplayScreen() == 2) TransitionToScreen(TITLE);
 
         } break;

@@ -8,8 +8,10 @@
 class Player
 {
 private:
-	Vector2 m_pos {};
+	raylib::Vector2 m_pos {};
 	raylib::Texture2DUnmanaged m_playerTexture {};
+	raylib::Texture2DUnmanaged m_playerAliveTexture {};
+	raylib::Texture2DUnmanaged m_playerDeadTexture {};
 	raylib::Texture2DUnmanaged m_arrowTexture {};
 	raylib::Texture2DUnmanaged m_bowLoadedTexture {};
 	raylib::Texture2DUnmanaged m_bowNotLoadedTexture {};
@@ -20,6 +22,9 @@ private:
 	bool m_hasArrow {true};
 	float m_fireRate {0.3f};
 	float m_fireTimer {0.0f};
+	bool m_controlsOn {true}; // Turn off controls in title screen
+	bool m_alive {true};
+	bool m_readyForEndScreen {};
 	
 	// Animation variables
 	int m_frame {};
@@ -31,7 +36,8 @@ private:
 
 public:
 	Player( 
-		raylib::Texture2DUnmanaged& playerTexture,
+		raylib::Texture2DUnmanaged& playerAliveTexture,
+		raylib::Texture2DUnmanaged& playerDeadTexture, 
 		raylib::Texture2DUnmanaged& arrowTexture,
 		raylib::Texture2DUnmanaged& m_bowLoadedTexture,
 		raylib::Texture2DUnmanaged& m_bowNotLoadedTexture,
@@ -42,7 +48,9 @@ public:
 	int getWidth() const { return m_width; }
 	int getHeight() const { return m_height; }
 	Vector2 getPos() const { return m_pos; }
-	bool getHasArrow() const { return m_hasArrow; };
+	bool getHasArrow() const { return m_hasArrow; }
+	void toggleAliveStatus() { m_alive = false; }
+	bool isReadyForEnd() const { return m_readyForEndScreen; }
 	void update(float deltaTime);
 	void draw();
 	void reload();

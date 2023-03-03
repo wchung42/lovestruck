@@ -8,9 +8,9 @@ Target::Target(
 ) : m_pos(pos), m_texture(aliveTexture),
 	m_aliveTexture(aliveTexture), m_endingTexture(endingTexture)
 {
-};
+}
 
-Target::~Target() { };
+Target::~Target() {}
 
 void Target::onHit()
 {
