@@ -7,6 +7,13 @@
 // Ending Screen Functions Definition
 //----------------------------------------------------------------------------------
 
+EndingScreen::EndingScreen(std::unordered_map<std::string, raylib::Texture2DUnmanaged> textures)
+    : Screen(textures)
+{
+}
+
+EndingScreen::~EndingScreen() {}
+
 // Ending Screen Initialization logic
 void EndingScreen::InitScreen()
 {

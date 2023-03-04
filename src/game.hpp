@@ -5,6 +5,7 @@
 #include "screen.hpp"
 #include <string>
 #include <memory>
+#include <unordered_map>
 
 class Game
 {
@@ -26,6 +27,7 @@ private:
 	raylib::Music m_backgroundMusic;
 	raylib::Sound m_openingTransitionSound;
 	raylib::Sound m_endingTransitionSound;
+	std::unordered_map<std::string, raylib::Texture2DUnmanaged> m_textures;
 public:
 	Game();
 	~Game();
@@ -37,6 +39,10 @@ public:
 	void Shutdown();
 private:
 	// Helper functions for running the game loop
+	void initializeTextures(
+		const std::vector<std::string>& texturePaths,
+		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures
+	);
 	void UpdateGame(float deltaTime);
 	void RenderGame();
 	void ChangeToScreen(GameScreen screen);		// Change to screen, no transition effect

@@ -10,9 +10,9 @@
 #include <iostream>
 #include <memory>
 
-Game::Game() {};
+Game::Game() {}
 
-Game::~Game() {};
+Game::~Game() {}
 
 void Game::Initialize()
 {
@@ -26,6 +26,20 @@ void Game::Initialize()
 
     m_window.SetTargetFPS(m_targetFPS);       // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
+
+    // Load textures
+    initializeTextures({
+        "./src/resources/textures/cupid.png",
+        "./src/resources/textures/bow_loaded.png",
+        "./src/resources/textures/bow_unloaded.png",
+        "./src/resources/textures/arrow.png",
+        "./src/resources/textures/hearts_01.png",
+        "./src/resources/textures/hearts_02.png",
+        "./src/resources/textures/hearts_03.png",
+        "./src/resources/textures/heart_end.png",
+        "./src/resources/textures/clouds.png",
+        "./src/resources/textures/cupid_end.png"
+    }, m_textures);
 
     // Load music
     m_backgroundMusic = raylib::Music("./src/resources/sfx/music/music.mp3");
@@ -49,10 +63,36 @@ void Game::RunLoop()
 void Game::Shutdown()
 {
     // Unload resources
+    for (auto& [name, texture] : m_textures)
+        texture.Unload();
+
     m_audio.Close();
     m_openingTransitionSound.Unload();
     m_endingTransitionSound.Unload();
 	m_window.Close();
+}
+
+void Game::initializeTextures(
+    const std::vector<std::string>& texturePaths,
+    std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures
+)
+{
+    // Load textures into GPU
+    for (auto& path : texturePaths)
+    {
+        raylib::Texture2DUnmanaged texture(path);
+        // Get name of file as key
+        std::string baseFilename = path.substr(path.find_last_of("/\\") + 1);
+        std::string::size_type const p(baseFilename.find_last_of('.'));
+        std::string fileWithoutExtension = baseFilename.substr(0, p);
+        textures[fileWithoutExtension] = texture;
+    }
+
+    // Set textures to filter_bilinear flag for better scaling
+    for (auto& [name, texture] : textures)
+    {
+        SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
+    }
 }
 
 void Game::UpdateGame(float deltaTime)
@@ -146,15 +186,25 @@ void Game::ChangeToScreen(GameScreen screen)
         } break;
         case TITLE:
         {
-            m_screen = std::make_unique<TitleScreen>();
+            std::unordered_map<std::string, raylib::Texture2DUnmanaged> temp;
+            temp["cupid"] = m_textures["cupid"];
+            temp["bow_loaded"] = m_textures["bow_loaded"];
+            temp["hearts_02"] = m_textures["hearts_02"];
+            m_screen = std::make_unique<TitleScreen>(temp);
         } break;
         case GAMEPLAY: 
         {
-            m_screen = std::make_unique<GameplayScreen>();
+            m_screen = std::make_unique<GameplayScreen>(m_textures);
         } break;
         case ENDING: 
         {
-            m_screen = std::make_unique<EndingScreen>();
+            std::unordered_map<std::string, raylib::Texture2DUnmanaged> temp;
+            temp["cupid_end"] = m_textures["cupid_end"];
+            temp["bow_unloaded"] = m_textures["bow_unloaded"];
+            temp["hearts_02"] = m_textures["hearts_02"];
+            temp["clouds"] = m_textures["clouds"];
+            temp["arrow"] = m_textures["arrow"];
+            m_screen = std::make_unique<EndingScreen>(temp);
         } break;
         default: break;
     }
@@ -197,15 +247,25 @@ void Game::UpdateTransition(void)
                 } break;
                 case TITLE:
                 {
-                    m_screen = std::make_unique<TitleScreen>();
+                    std::unordered_map<std::string, raylib::Texture2DUnmanaged> temp;
+                    temp["cupid"] = m_textures["cupid"];
+                    temp["bow_loaded"] = m_textures["bow_loaded"];
+                    temp["hearts_02"] = m_textures["hearts_02"];
+                    m_screen = std::make_unique<TitleScreen>(temp);
                 } break;
                 case GAMEPLAY:
                 {
-                    m_screen = std::make_unique<GameplayScreen>();
+                    m_screen = std::make_unique<GameplayScreen>(m_textures);
                 } break;
                 case ENDING:
                 {
-                    m_screen = std::make_unique<EndingScreen>();
+                    std::unordered_map<std::string, raylib::Texture2DUnmanaged> temp;
+                    temp["cupid_end"] = m_textures["cupid_end"];
+                    temp["bow_unloaded"] = m_textures["bow_unloaded"];
+                    temp["hearts_02"] = m_textures["hearts_02"];
+                    temp["clouds"] = m_textures["clouds"];
+                    temp["arrow"] = m_textures["arrow"];
+                    m_screen = std::make_unique<EndingScreen>(temp);
                 } break;
                 default: break;
             }

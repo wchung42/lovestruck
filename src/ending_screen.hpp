@@ -7,6 +7,8 @@
 class EndingScreen : public Screen
 {
 public:
+	EndingScreen(std::unordered_map<std::string, raylib::Texture2DUnmanaged> textures);
+	~EndingScreen();
 	void InitScreen();
 	void UpdateScreen(float deltaTime);
 	void DrawScreen();

@@ -5,6 +5,11 @@
 
 Screen::Screen() {}
 
+Screen::Screen(std::unordered_map<std::string, raylib::Texture2DUnmanaged> textures) 
+	: m_textures(textures)
+{
+}
+
 Screen::~Screen() {}
 
 void Screen::InitScreen()

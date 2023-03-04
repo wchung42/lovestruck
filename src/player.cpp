@@ -108,7 +108,7 @@ void Player::draw()
 	m_playerTexture.Draw(source, dest, raylib::Vector2 {}, 0.0f, raylib::WHITE);
 	
 	//// Draw collision rectangle
-	DrawRectangleLinesEx(this->getCollisionRec(), 1.0f, RED);
+	//DrawRectangleLinesEx(this->getCollisionRec(), 1.0f, RED);
 	////
 	
 	// Draw bow and arrow

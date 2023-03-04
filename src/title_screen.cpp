@@ -2,24 +2,42 @@
 #include "./include/raylib-cpp.hpp"
 #include "screen.hpp"
 #include "title_screen.hpp"
+#include <iostream>
 
 //----------------------------------------------------------------------------------
 // Title Screen Functions Definition
 //----------------------------------------------------------------------------------
 
+TitleScreen::TitleScreen(std::unordered_map<std::string, raylib::Texture2DUnmanaged> textures)
+    : Screen(textures)
+{
+    //
+}
+
+TitleScreen::~TitleScreen() {}
+
 // Title Screen Initialization logic
 void TitleScreen::InitScreen()
 {
-    // TODO: Initialize TITLE screen variables here!
-    m_framesCounter = 0;
-    m_finishScreen = 0;
+    m_title = raylib::Text("L vestruck", 100.0f, BLACK, GetFontDefault(), 5.0f);
+    auto titleMeasurements = m_title.MeasureEx();
+    m_titlePos = raylib::Vector2 {
+        static_cast<float>((GetScreenWidth() / 2) - (titleMeasurements.GetX() / 2)),
+        static_cast<float>(GetScreenHeight() / 2) - (titleMeasurements.GetY() / 2)
+    };
+
+    m_heartPos = raylib::Vector2 {
+        static_cast<float>(GetScreenWidth() / 2 - m_textures["hearts_02"].GetWidth()),
+        static_cast<float>(GetScreenHeight() / 2 - m_textures["hearts_02"].GetHeight())
+    };
+    m_heartSourceRec = raylib::Rectangle {256.0f, 0.0f, 256.0f, 256.0f};
+    m_heartDestRec = raylib::Rectangle {m_heartPos.GetX(), m_heartPos.GetY(), 100.0f, 100.0f};
+
 }
 
 // Title Screen Update logic
 void TitleScreen::UpdateScreen(float deltaTime)
 {
-    // TODO: Update TITLE screen variables here!
-
     // Press enter or tap to change to GAMEPLAY screen
     if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
     {
@@ -31,12 +49,10 @@ void TitleScreen::UpdateScreen(float deltaTime)
 // Title Screen Draw logic
 void TitleScreen::DrawScreen()
 {
-    // TODO: Draw TITLE screen here!
-    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), GREEN);
-    raylib::Vector2 titlePosition {20, 10};
-    raylib::DrawText("TITLE SCREEN", titlePosition.GetX(), titlePosition.GetY(), 20, DARKGREEN);
-    raylib::Vector2 instructionPosition = {120, 220};
-    raylib::DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", instructionPosition.GetX(), instructionPosition.GetY(), 30, DARKGREEN);
+    m_title.Draw(m_titlePos);
+
+
+    m_textures["hearts_02"].Draw(m_heartSourceRec, m_heartDestRec, raylib::Vector2 {}, 0.0f, WHITE);
 }
 
 // Title Screen Unload logic

@@ -3,6 +3,7 @@
 #include "raylib.h"
 #include "include/raylib-cpp.hpp"
 #include <string>
+#include <unordered_map>
 
 //----------------------------------------------------------------------------------
 // Types and Structures Definition
@@ -14,8 +15,10 @@ class Screen
 protected:
 	int m_framesCounter {};
 	int m_finishScreen {};
+	std::unordered_map<std::string, raylib::Texture2DUnmanaged> m_textures;
 public:
 	Screen();
+	Screen(std::unordered_map<std::string, raylib::Texture2DUnmanaged> textures);
 	~Screen();
 	virtual void InitScreen();
 	virtual void UpdateScreen(float deltaTime);
