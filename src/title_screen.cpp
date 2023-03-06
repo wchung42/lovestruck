@@ -10,11 +10,8 @@
 //----------------------------------------------------------------------------------
 
 TitleScreen::TitleScreen(
-    std::unordered_map<std::string,
-    raylib::Texture2DUnmanaged> textures,
-    raylib::Font& font
-)
-    : Screen(textures)
+    std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures
+) : Screen(textures)
 {
     //
 }
@@ -32,11 +29,11 @@ void TitleScreen::InitScreen()
     };
 
     // Player
-    m_playerPos = raylib::Vector2 {
+    raylib::Vector2 playerPos {
         static_cast<float>(GetScreenWidth() * 0.7f),
         static_cast<float>((GetScreenHeight() / 2) - m_textures["cupid"].GetHeight())
     };
-    m_player = AnimatedObject (m_playerPos, m_textures["cupid"], 2, 1.0f / 1.5f);
+    m_player = AnimatedObject (playerPos, m_textures["cupid"], 2, 1.0f / 1.5f);
 
     // Buttons
     float buttonOffset {1.0f};

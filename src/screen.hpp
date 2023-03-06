@@ -34,5 +34,4 @@ public:
 		const std::vector<std::string>& soundPaths,
 		std::vector<raylib::Sound>& sounds
 	);
-
 };

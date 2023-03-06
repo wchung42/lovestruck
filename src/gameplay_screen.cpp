@@ -9,9 +9,13 @@
 // Gameplay Screen Functions Definition
 //----------------------------------------------------------------------------------
 
-GameplayScreen::GameplayScreen(std::unordered_map<std::string, raylib::Texture2DUnmanaged> textures)	
-	: Screen(textures)
+GameplayScreen::GameplayScreen(
+	std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+	const raylib::Font& font,
+	std::shared_ptr<int> score)	
+	: Screen(textures), m_font(font), m_score(score)
 {
+
 }
 
 GameplayScreen::~GameplayScreen() {}
@@ -24,8 +28,6 @@ void GameplayScreen::InitScreen()
 		"./src/resources/sfx/arrow_whoosh.mp3",
 		"./src/resources/sfx/heart_hit.wav"
 	}, m_sounds);
-
-	// TODO: Load font
 
     // Initialize player
     Vector2 startPos {0.0f, static_cast<float>(GetScreenHeight() / 2)};
@@ -70,6 +72,7 @@ void GameplayScreen::InitScreen()
 	};
 	m_clouds.push_back(Cloud(cloudPosition1, m_textures["clouds"]));
 	m_clouds.push_back(Cloud(cloudPosition2, m_textures["clouds"]));
+
 }
 
 // Gameplay Screen Update logic
@@ -127,7 +130,7 @@ void GameplayScreen::UpdateScreen(float deltaTime)
 					// Score calculation
 					if ((*itTarget)->getHealth() == 0)
 					{
-						m_score += (*itTarget)->getScore();
+						(*m_score) += (*itTarget)->getScore();
 						//m_sounds[1].Play();
 					}
 
@@ -214,12 +217,20 @@ void GameplayScreen::DrawScreen()
 
     // Draw score
 	raylib::Text scoreText(
-		std::to_string(m_score),
+		m_font,
+		std::to_string(*m_score),
+		75.0f,
+		3.0f,
+		BLACK
+	);
+
+	/*raylib::Text scoreText(
+		std::to_string(*m_score),
 		75.0f,
 		BLACK,
 		GetFontDefault(),
 		3.0f
-	);
+	);*/
 	scoreText.Draw(raylib::Vector2 {static_cast<float>((GetScreenWidth() / 2) - (scoreText.Measure() / 2)), 25});
 
 	// FPS counter
@@ -239,4 +250,5 @@ void GameplayScreen::UnloadScreen()
 	// Unload sounds
 	for (auto& sound : m_sounds)
 		sound.Unload();
+
 }

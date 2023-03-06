@@ -42,11 +42,13 @@ void Game::Initialize()
         "./src/resources/textures/title.png",
         "./src/resources/textures/play_button.png",
         "./src/resources/textures/credits_button.png",
-        "./src/resources/textures/quit_button.png"
+        "./src/resources/textures/quit_button.png",
+        "./src/resources/textures/restart_button.png"
     }, m_textures);
 
     // Load font
-    m_font = raylib::Font("./src/resources/fonts/Love.tff");
+    m_font = raylib::Font("./src/resources/fonts/Love.ttf", 64);
+    SetTextureFilter(m_font.texture, TEXTURE_FILTER_BILINEAR);
 
     // Load music
     m_backgroundMusic = raylib::Music("./src/resources/sfx/music/music.mp3");
@@ -55,6 +57,8 @@ void Game::Initialize()
     // Load transition sounds
     m_openingTransitionSound = raylib::Sound::Sound("./src/resources/sfx/gameplay_opening_transition.mp3");
     m_endingTransitionSound = raylib::Sound::Sound("./src/resources/sfx/gameplay_ending_transition.mp3");
+
+    m_score = std::make_shared<int>();
 }
 
 void Game::RunLoop()
@@ -193,15 +197,15 @@ void Game::ChangeToScreen(GameScreen screen)
         } break;
         case TITLE:
         {
-            m_screen = std::make_unique<TitleScreen>(m_textures, m_font);
+            m_screen = std::make_unique<TitleScreen>(m_textures);
         } break;
         case GAMEPLAY: 
         {
-            m_screen = std::make_unique<GameplayScreen>(m_textures);
+            m_screen = std::make_unique<GameplayScreen>(m_textures, m_font, m_score);
         } break;
         case ENDING: 
         {
-            m_screen = std::make_unique<EndingScreen>(m_textures);
+            m_screen = std::make_unique<EndingScreen>(m_textures, m_font);
         } break;
         default: break;
     }
@@ -244,15 +248,15 @@ void Game::UpdateTransition(void)
                 } break;
                 case TITLE:
                 {
-                    m_screen = std::make_unique<TitleScreen>(m_textures, m_font);
+                    m_screen = std::make_unique<TitleScreen>(m_textures);
                 } break;
                 case GAMEPLAY:
                 {
-                    m_screen = std::make_unique<GameplayScreen>(m_textures);
+                    m_screen = std::make_unique<GameplayScreen>(m_textures, m_font, m_score);
                 } break;
                 case ENDING:
                 {
-                    m_screen = std::make_unique<EndingScreen>(m_textures);
+                    m_screen = std::make_unique<EndingScreen>(m_textures, m_font);
                 } break;
                 default: break;
             }

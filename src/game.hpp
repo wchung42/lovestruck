@@ -16,7 +16,7 @@ private:
 	int m_windowWidth {1280};
 	int m_windowHeight {m_windowWidth / 16 * 9};
 	int m_targetFPS {60};
-	std::string m_title {"raylib-game-template"};
+	std::string m_title {"Lovestruck"};
 	float m_transAlpha {0.0f};
 	bool m_onTransition {};
 	bool m_transFadeOut {};
@@ -29,6 +29,7 @@ private:
 	raylib::Sound m_endingTransitionSound;
 	std::unordered_map<std::string, raylib::Texture2DUnmanaged> m_textures;
 	raylib::Font m_font;
+	std::shared_ptr<int> m_score;
 public:
 	Game();
 	~Game();
