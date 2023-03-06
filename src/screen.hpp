@@ -28,7 +28,7 @@ public:
 	int GetFinishScreen() const { return m_finishScreen; } // Return the next screen
 	void initializeTextures(
 		const std::vector<std::string>& texturePaths,
-		std::vector<raylib::Texture2DUnmanaged>& textures
+		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures
 	);
 	void initializeSounds(
 		const std::vector<std::string>& soundPaths,

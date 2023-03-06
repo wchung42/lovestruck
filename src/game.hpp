@@ -28,6 +28,7 @@ private:
 	raylib::Sound m_openingTransitionSound;
 	raylib::Sound m_endingTransitionSound;
 	std::unordered_map<std::string, raylib::Texture2DUnmanaged> m_textures;
+	raylib::Font m_font;
 public:
 	Game();
 	~Game();

@@ -38,8 +38,15 @@ void Game::Initialize()
         "./src/resources/textures/hearts_03.png",
         "./src/resources/textures/heart_end.png",
         "./src/resources/textures/clouds.png",
-        "./src/resources/textures/cupid_end.png"
+        "./src/resources/textures/cupid_end.png",
+        "./src/resources/textures/title.png",
+        "./src/resources/textures/play_button.png",
+        "./src/resources/textures/credits_button.png",
+        "./src/resources/textures/quit_button.png"
     }, m_textures);
+
+    // Load font
+    m_font = raylib::Font("./src/resources/fonts/Love.tff");
 
     // Load music
     m_backgroundMusic = raylib::Music("./src/resources/sfx/music/music.mp3");
@@ -186,11 +193,7 @@ void Game::ChangeToScreen(GameScreen screen)
         } break;
         case TITLE:
         {
-            std::unordered_map<std::string, raylib::Texture2DUnmanaged> temp;
-            temp["cupid"] = m_textures["cupid"];
-            temp["bow_loaded"] = m_textures["bow_loaded"];
-            temp["hearts_02"] = m_textures["hearts_02"];
-            m_screen = std::make_unique<TitleScreen>(temp);
+            m_screen = std::make_unique<TitleScreen>(m_textures, m_font);
         } break;
         case GAMEPLAY: 
         {
@@ -198,13 +201,7 @@ void Game::ChangeToScreen(GameScreen screen)
         } break;
         case ENDING: 
         {
-            std::unordered_map<std::string, raylib::Texture2DUnmanaged> temp;
-            temp["cupid_end"] = m_textures["cupid_end"];
-            temp["bow_unloaded"] = m_textures["bow_unloaded"];
-            temp["hearts_02"] = m_textures["hearts_02"];
-            temp["clouds"] = m_textures["clouds"];
-            temp["arrow"] = m_textures["arrow"];
-            m_screen = std::make_unique<EndingScreen>(temp);
+            m_screen = std::make_unique<EndingScreen>(m_textures);
         } break;
         default: break;
     }
@@ -247,11 +244,7 @@ void Game::UpdateTransition(void)
                 } break;
                 case TITLE:
                 {
-                    std::unordered_map<std::string, raylib::Texture2DUnmanaged> temp;
-                    temp["cupid"] = m_textures["cupid"];
-                    temp["bow_loaded"] = m_textures["bow_loaded"];
-                    temp["hearts_02"] = m_textures["hearts_02"];
-                    m_screen = std::make_unique<TitleScreen>(temp);
+                    m_screen = std::make_unique<TitleScreen>(m_textures, m_font);
                 } break;
                 case GAMEPLAY:
                 {
@@ -259,13 +252,7 @@ void Game::UpdateTransition(void)
                 } break;
                 case ENDING:
                 {
-                    std::unordered_map<std::string, raylib::Texture2DUnmanaged> temp;
-                    temp["cupid_end"] = m_textures["cupid_end"];
-                    temp["bow_unloaded"] = m_textures["bow_unloaded"];
-                    temp["hearts_02"] = m_textures["hearts_02"];
-                    temp["clouds"] = m_textures["clouds"];
-                    temp["arrow"] = m_textures["arrow"];
-                    m_screen = std::make_unique<EndingScreen>(temp);
+                    m_screen = std::make_unique<EndingScreen>(m_textures);
                 } break;
                 default: break;
             }

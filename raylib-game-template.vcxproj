@@ -148,7 +148,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\animated_object.cpp" />
     <ClCompile Include="src\arrow.cpp" />
+    <ClCompile Include="src\button.cpp" />
     <ClCompile Include="src\cloud.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\ending_screen.cpp" />
@@ -166,7 +168,9 @@
     <ClCompile Include="src\title_screen.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\animated_object.hpp" />
     <ClInclude Include="src\arrow.hpp" />
+    <ClInclude Include="src\button.hpp" />
     <ClInclude Include="src\cloud.hpp" />
     <ClInclude Include="src\ending_screen.hpp" />
     <ClInclude Include="src\game.hpp" />
