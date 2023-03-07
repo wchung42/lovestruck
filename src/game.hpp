@@ -25,6 +25,7 @@ private:
 	bool m_transFadeOut {};
 	int m_transFromScreen {-1};
 	GameScreen m_transToScreen = UNKNOWN;
+	GameScreen m_prevScreen = UNKNOWN;
 
 	// Resource member variables
 	std::unique_ptr<Screen> m_screen;

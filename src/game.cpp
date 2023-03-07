@@ -193,7 +193,16 @@ void Game::UpdateGame(float deltaTime)
         } break;
         case ENDING:
         {
-            if (nextScreen) TransitionToScreen(TITLE);
+            if (nextScreen == 3)
+            {   
+                m_openingTransitionSound.Play();
+                TransitionToScreen(GAMEPLAY);
+            }
+            else if (nextScreen == 5)
+            {
+                m_openingTransitionSound.Play();
+                TransitionToScreen(CREDITS);
+            }
 
         } break;
         default: break;
@@ -216,6 +225,8 @@ void Game::RenderGame()
 // Change to next screen, no transition
 void Game::ChangeToScreen(GameScreen screen)
 {
+    // Save previous screen
+    m_prevScreen = m_currentScreen;
     // Unload current screen
     m_screen->UnloadScreen();
 
@@ -232,11 +243,12 @@ void Game::ChangeToScreen(GameScreen screen)
         } break;
         case GAMEPLAY: 
         {
+            *m_score = 0;
             m_screen = std::make_unique<GameplayScreen>(m_textures, m_font, m_score);
         } break;
         case CREDITS:
         {
-            m_screen = std::make_unique<CreditsScreen>(m_font, m_textures["back_button"]);
+            m_screen = std::make_unique<CreditsScreen>(m_font, m_textures["back_button"], m_prevScreen);
         } break;
         case ENDING: 
         {
@@ -259,7 +271,7 @@ void Game::TransitionToScreen(GameScreen screen)
 }
 
 // Update transition effect (fade-in, fade-out)
-void Game::UpdateTransition(void)
+void Game::UpdateTransition()
 {
     if (!m_transFadeOut)
     {
@@ -271,6 +283,8 @@ void Game::UpdateTransition(void)
         {
             m_transAlpha = 1.0f;
 
+            // Save previous screen
+            m_prevScreen = m_currentScreen;
             // Unload current screen
             m_screen->UnloadScreen();
 
@@ -287,11 +301,12 @@ void Game::UpdateTransition(void)
                 } break;
                 case GAMEPLAY:
                 {
+                    *m_score = 0;
                     m_screen = std::make_unique<GameplayScreen>(m_textures, m_font, m_score);
                 } break;
                 case CREDITS:
                 {
-                    m_screen = std::make_unique<CreditsScreen>(m_font, m_textures["back_button"]);
+                    m_screen = std::make_unique<CreditsScreen>(m_font, m_textures["back_button"], m_prevScreen);
                 } break;
                 case ENDING:
                 {

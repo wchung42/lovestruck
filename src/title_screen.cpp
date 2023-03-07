@@ -71,6 +71,7 @@ void TitleScreen::UpdateScreen(float deltaTime)
 
     if (m_creditsButton.isClicked())
     {
+        std::cout << "credits button clicked" << '\n';
         m_finishScreen = 5;
         return;
     }

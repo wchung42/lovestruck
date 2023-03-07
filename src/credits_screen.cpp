@@ -2,8 +2,9 @@
 
 CreditsScreen::CreditsScreen(
 	raylib::Font& font,
-	raylib::Texture2DUnmanaged backButtonTexture)
-	: m_font(font), m_backButtonTexture(backButtonTexture)
+	raylib::Texture2DUnmanaged backButtonTexture,
+	GameScreen prevScreen
+) : m_font(font), m_backButtonTexture(backButtonTexture), m_prevScreen(prevScreen)
 {
 
 }
@@ -109,7 +110,7 @@ void CreditsScreen::UpdateScreen(float deltaTime)
 {
 	// Do nothing
 	if (m_backButton.isClicked())
-		m_finishScreen = 1;			// Return to title screen
+		m_finishScreen = m_prevScreen;			// Return to previous screen
 	
 	m_backButton.update();
 }

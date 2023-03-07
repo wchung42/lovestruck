@@ -12,6 +12,7 @@ private:
 	raylib::Font& m_font;
 	raylib::Texture2DUnmanaged m_backButtonTexture;
 	Button m_backButton;
+	GameScreen m_prevScreen;
 
 	// Headings
 	raylib::Vector2 m_designerHeadingPos;
@@ -31,7 +32,8 @@ private:
 public:
 	CreditsScreen(
 		raylib::Font& font,
-		raylib::Texture2DUnmanaged backButtonTexture
+		raylib::Texture2DUnmanaged backButtonTexture,
+		GameScreen prevScreen
 	);
 	~CreditsScreen();
 	void InitScreen();

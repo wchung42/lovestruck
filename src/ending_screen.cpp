@@ -2,6 +2,7 @@
 #include "./include/raylib-cpp.hpp"
 #include "screen.hpp"
 #include "ending_screen.hpp"
+#include <iostream>
 
 //----------------------------------------------------------------------------------
 // Ending Screen Functions Definition
@@ -54,8 +55,15 @@ void EndingScreen::UpdateScreen(float deltaTime)
     // Press enter or tap to change to GAMEPLAY screen
     if (m_playAgainButton.isClicked())
     {
-        //finishScreen = 1;   // OPTIONS
-        m_finishScreen = 2;   // GAMEPLAY
+        //finishScreen = 1;     // OPTIONS
+        m_finishScreen = 3;     // GAMEPLAY
+        return;
+    }
+
+    // Show credits
+    if (m_creditsButton.isClicked())
+    {
+        m_finishScreen = 5;     // CREDITS
         return;
     }
 
@@ -109,8 +117,6 @@ void EndingScreen::DrawScreen()
     m_playAgainButton.draw();
     m_creditsButton.draw();
     m_quitButton.draw();
-
-    DrawLine(GetScreenWidth() / 2, 0, GetScreenWidth() / 2, GetScreenHeight(), RED);
 
 }
 
