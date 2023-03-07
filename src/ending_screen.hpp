@@ -9,17 +9,18 @@
 class EndingScreen : public Screen
 {
 private:
-	raylib::Texture2DUnmanaged m_playerTexture;
 	AnimatedObject m_player;
-	raylib::Texture2DUnmanaged m_restartButtonTexture;
-	Button m_restartButton;
-	raylib::Texture2DUnmanaged m_quitButtonTexture;
+	Button m_playAgainButton;
+	Button m_creditsButton;
 	Button m_quitButton;
-	const raylib::Font m_font;
+	const raylib::Font& m_font;
+	std::shared_ptr<int> m_score;
+	raylib::Vector2 m_textPos {};
 public:
 	EndingScreen(
 		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
-		const raylib::Font& font
+		const raylib::Font& font,
+		const std::shared_ptr<int> m_score
 	);
 	~EndingScreen();
 	void InitScreen();

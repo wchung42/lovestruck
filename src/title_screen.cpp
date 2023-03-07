@@ -29,11 +29,8 @@ void TitleScreen::InitScreen()
     };
 
     // Player
-    raylib::Vector2 playerPos {
-        static_cast<float>(GetScreenWidth() * 0.7f),
-        static_cast<float>((GetScreenHeight() / 2) - m_textures["cupid"].GetHeight())
-    };
-    m_player = AnimatedObject (playerPos, m_textures["cupid"], 2, 1.0f / 1.5f);
+    float playerScale {1.0f};
+    m_player = AnimatedObject (m_textures["cupid"], 2, 1.0f / 1.5f, -1, 1, playerScale);
 
     // Buttons
     float buttonOffset {1.0f};
@@ -82,7 +79,17 @@ void TitleScreen::UpdateScreen(float deltaTime)
 void TitleScreen::DrawScreen()
 {
     float deltaTime = GetFrameTime();
-    m_player.draw(deltaTime);
+    raylib::Vector2 playerPos {
+        static_cast<float>(GetScreenWidth() * 0.7f),
+        static_cast<float>((GetScreenHeight() * 0.5f) - m_textures["cupid"].GetHeight())
+    };
+    raylib::Rectangle playerDestRec (
+        playerPos.x,
+        playerPos.y + sin(GetTime() * 2.0f) * 5.0f,
+        static_cast<float>(m_player.getWidth() * m_player.getScale()),
+        static_cast<float>(m_player.getHeight() * m_player.getScale())
+    );
+    m_player.draw(deltaTime, playerDestRec);
     m_titleTexture.Draw(m_titlePos, 0.0f, 1.0f, WHITE);
     // Draw buttons
     m_playButton.draw();

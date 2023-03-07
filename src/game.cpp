@@ -43,11 +43,11 @@ void Game::Initialize()
         "./src/resources/textures/play_button.png",
         "./src/resources/textures/credits_button.png",
         "./src/resources/textures/quit_button.png",
-        "./src/resources/textures/restart_button.png"
+        "./src/resources/textures/play_again_button.png"
     }, m_textures);
 
     // Load font
-    m_font = raylib::Font("./src/resources/fonts/Love.ttf", 64);
+    m_font = raylib::Font("./src/resources/fonts/SimpleHandmade.ttf", 64);
     SetTextureFilter(m_font.texture, TEXTURE_FILTER_BILINEAR);
 
     // Load music
@@ -205,7 +205,7 @@ void Game::ChangeToScreen(GameScreen screen)
         } break;
         case ENDING: 
         {
-            m_screen = std::make_unique<EndingScreen>(m_textures, m_font);
+            m_screen = std::make_unique<EndingScreen>(m_textures, m_font, m_score);
         } break;
         default: break;
     }
@@ -256,7 +256,7 @@ void Game::UpdateTransition(void)
                 } break;
                 case ENDING:
                 {
-                    m_screen = std::make_unique<EndingScreen>(m_textures, m_font);
+                    m_screen = std::make_unique<EndingScreen>(m_textures, m_font, m_score);
                 } break;
                 default: break;
             }
