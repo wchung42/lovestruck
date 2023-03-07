@@ -45,7 +45,7 @@ void GameplayScreen::InitScreen()
     m_arrows = std::make_unique<std::vector<std::shared_ptr<Arrow>>>();
 
     // TODO: Increase spawnRate as game progresses
-    float targetSpawnRate {1.75f};
+    float targetSpawnRate {1.5f};
     std::vector<raylib::Texture2DUnmanaged> heartTextures {
 		m_textures["hearts_01"],
 		m_textures["hearts_02"],
