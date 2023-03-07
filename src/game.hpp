@@ -5,27 +5,38 @@
 #include "screen.hpp"
 #include <string>
 #include <memory>
+#include <unordered_map>
 
 class Game
 {
 public:
 	GameScreen m_currentScreen = LOGO;
 private:
+	// General game variables
 	raylib::Window m_window {};
 	int m_windowWidth {1280};
 	int m_windowHeight {m_windowWidth / 16 * 9};
 	int m_targetFPS {60};
-	std::string m_title {"raylib-game-template"};
+	std::string m_title {"Lovestruck"};
+	
+	// Transition member variables
 	float m_transAlpha {0.0f};
 	bool m_onTransition {};
 	bool m_transFadeOut {};
 	int m_transFromScreen {-1};
-	std::unique_ptr<Screen> m_screen;
 	GameScreen m_transToScreen = UNKNOWN;
+	GameScreen m_prevScreen = UNKNOWN;
+
+	// Resource member variables
+	std::unique_ptr<Screen> m_screen;
 	raylib::AudioDevice m_audio;
 	raylib::Music m_backgroundMusic;
 	raylib::Sound m_openingTransitionSound;
 	raylib::Sound m_endingTransitionSound;
+	std::unordered_map<std::string, raylib::Texture2DUnmanaged> m_textures;
+	raylib::Font m_font;
+	std::shared_ptr<int> m_score;
+	bool m_exitGame {};
 public:
 	Game();
 	~Game();
@@ -37,6 +48,10 @@ public:
 	void Shutdown();
 private:
 	// Helper functions for running the game loop
+	void initializeTextures(
+		const std::vector<std::string>& texturePaths,
+		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures
+	);
 	void UpdateGame(float deltaTime);
 	void RenderGame();
 	void ChangeToScreen(GameScreen screen);		// Change to screen, no transition effect

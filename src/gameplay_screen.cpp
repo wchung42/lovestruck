@@ -9,53 +9,48 @@
 // Gameplay Screen Functions Definition
 //----------------------------------------------------------------------------------
 
+GameplayScreen::GameplayScreen(
+	std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+	const raylib::Font& font,
+	std::shared_ptr<int> score)	
+	: Screen(textures), m_font(font), m_score(score)
+{
+
+}
+
+GameplayScreen::~GameplayScreen() {}
+
 // Gameplay Screen Initialization logic
 void GameplayScreen::InitScreen()
 {
-    // Load resources
-    initializeTextures({
-        "./src/resources/textures/cupid_spritesheet.png",
-        "./src/resources/textures/cupid_bow_loaded.png",
-        "./src/resources/textures/cupid_bow_unloaded.png",
-        "./src/resources/textures/cupid_arrow.png",
-		"./src/resources/textures/hearts_spritesheet_01.png",
-		"./src/resources/textures/hearts_spritesheet_02.png",
-		"./src/resources/textures/hearts_spritesheet_03.png",
-		"./src/resources/textures/heart_ending.png",
-		"./src/resources/textures/cloud_full.png",
-		"./src/resources/textures/cupid_ending_spritesheet.png"
-    }, m_textures);
-
 	// Load sounds
 	initializeSounds({
 		"./src/resources/sfx/arrow_whoosh.mp3",
 		"./src/resources/sfx/heart_hit.wav"
 	}, m_sounds);
 
-	// TODO: Load font
-
     // Initialize player
     Vector2 startPos {0.0f, static_cast<float>(GetScreenHeight() / 2)};
     m_player = std::make_unique<Player>(
-        m_textures[0],	// Player alive texture
-		m_textures[9],	// PLayer dead texture
-        m_textures[3],	// Arrow texture
-		m_textures[1],	// Loaded bow texture
-		m_textures[2],	// Unloaded bow texture
-        2,				// Max frames
-        1.0f / 1.5f		// Update time
+        m_textures["cupid"],				// Player alive texture
+		m_textures["cupid_end"],			// PLayer dead texture
+        m_textures["arrow"],				// Arrow texture
+		m_textures["bow_loaded"],			// Loaded bow texture
+		m_textures["bow_unloaded"],			// Unloaded bow texture
+        2,									// Max frames
+        1.0f / 1.5f							// Update time
     );
 
     // Initialize arrows vector
     m_arrows = std::make_unique<std::vector<std::shared_ptr<Arrow>>>();
 
     // TODO: Increase spawnRate as game progresses
-    float targetSpawnRate {1.75f};
+    float targetSpawnRate {1.5f};
     std::vector<raylib::Texture2DUnmanaged> heartTextures {
-		m_textures[4],
-		m_textures[5],
-		m_textures[6],
-		m_textures[7]
+		m_textures["hearts_01"],
+		m_textures["hearts_02"],
+		m_textures["hearts_03"],
+		m_textures["heart_end"]
 	};
     m_spawner = std::make_unique<TargetSpawner>(
         targetSpawnRate,									// Spawn rate
@@ -68,15 +63,16 @@ void GameplayScreen::InitScreen()
 	
 	raylib::Vector2 cloudPosition1 {
 		0.0f,
-		static_cast<float>(GetScreenHeight() - m_textures[8].height / 2)
+		static_cast<float>(GetScreenHeight() - m_textures["clouds"].height / 2)
 	};
 	
 	raylib::Vector2 cloudPosition2 {
 		static_cast<float>(GetScreenWidth()),
-		static_cast<float>(GetScreenHeight() - m_textures[8].height / 2)
+		static_cast<float>(GetScreenHeight() - m_textures["clouds"].height / 2)
 	};
-	m_clouds.push_back(Cloud(cloudPosition1, m_textures[8]));
-	m_clouds.push_back(Cloud(cloudPosition2, m_textures[8]));
+	m_clouds.push_back(Cloud(cloudPosition1, m_textures["clouds"]));
+	m_clouds.push_back(Cloud(cloudPosition2, m_textures["clouds"]));
+
 }
 
 // Gameplay Screen Update logic
@@ -134,7 +130,7 @@ void GameplayScreen::UpdateScreen(float deltaTime)
 					// Score calculation
 					if ((*itTarget)->getHealth() == 0)
 					{
-						m_score += (*itTarget)->getScore();
+						(*m_score) += (*itTarget)->getScore();
 						//m_sounds[1].Play();
 					}
 
@@ -221,12 +217,20 @@ void GameplayScreen::DrawScreen()
 
     // Draw score
 	raylib::Text scoreText(
-		std::to_string(m_score),
+		m_font,
+		std::to_string(*m_score),
+		75.0f,
+		3.0f,
+		BLACK
+	);
+
+	/*raylib::Text scoreText(
+		std::to_string(*m_score),
 		75.0f,
 		BLACK,
 		GetFontDefault(),
 		3.0f
-	);
+	);*/
 	scoreText.Draw(raylib::Vector2 {static_cast<float>((GetScreenWidth() / 2) - (scoreText.Measure() / 2)), 25});
 
 	// FPS counter
@@ -243,11 +247,8 @@ void GameplayScreen::DrawScreen()
 // Gameplay Screen Unload logic
 void GameplayScreen::UnloadScreen()
 {
-    // Unload textures
-	for (auto& texture : m_textures)
-		texture.Unload();
-
 	// Unload sounds
 	for (auto& sound : m_sounds)
 		sound.Unload();
+
 }

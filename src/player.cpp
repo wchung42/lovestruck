@@ -75,6 +75,8 @@ void Player::update(float deltaTime)
 			m_pos.y -= m_velocity;
 		else if ((IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) && m_pos.y + (m_height * m_scale) < GetScreenHeight())
 			m_pos.y += m_velocity;
+		else
+			m_pos.y += sin(static_cast<float>(GetTime()) * 2.0f) * 0.25f;
 	}
 
 	// Update arrow position
@@ -108,7 +110,7 @@ void Player::draw()
 	m_playerTexture.Draw(source, dest, raylib::Vector2 {}, 0.0f, raylib::WHITE);
 	
 	//// Draw collision rectangle
-	DrawRectangleLinesEx(this->getCollisionRec(), 1.0f, RED);
+	//DrawRectangleLinesEx(this->getCollisionRec(), 1.0f, RED);
 	////
 	
 	// Draw bow and arrow
