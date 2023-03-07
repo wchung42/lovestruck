@@ -6,6 +6,7 @@
 #include "title_screen.hpp"
 #include "gameplay_screen.hpp"
 #include "options_screen.hpp"
+#include "credits_screen.hpp"
 #include "ending_screen.hpp"
 #include <iostream>
 #include <memory>
@@ -18,7 +19,8 @@ void Game::Initialize()
 {
     // Initialize window
 	m_window.raylib::Window::Init(m_windowWidth, m_windowHeight, m_title);
-	
+    SetExitKey(0);
+
     // Setup and init first screen
     m_currentScreen = LOGO;
     m_screen = std::make_unique<LogoScreen>();
@@ -43,7 +45,8 @@ void Game::Initialize()
         "./src/resources/textures/play_button.png",
         "./src/resources/textures/credits_button.png",
         "./src/resources/textures/quit_button.png",
-        "./src/resources/textures/play_again_button.png"
+        "./src/resources/textures/play_again_button.png",
+        "./src/resources/textures/back_button.png"
     }, m_textures);
 
     // Load font
@@ -63,7 +66,7 @@ void Game::Initialize()
 
 void Game::RunLoop()
 {
-	while (!m_window.ShouldClose())
+	while (!m_exitGame)
 	{
 		const float dT = m_window.GetFrameTime();
 		UpdateGame(dT);
@@ -77,7 +80,6 @@ void Game::Shutdown()
     for (auto& [name, texture] : m_textures)
         texture.Unload();
 
-    m_audio.Close();
     m_openingTransitionSound.Unload();
     m_endingTransitionSound.Unload();
 	m_window.Close();
@@ -108,6 +110,12 @@ void Game::initializeTextures(
 
 void Game::UpdateGame(float deltaTime)
 {
+    if (WindowShouldClose())
+    {
+        m_exitGame = true;
+        return;
+    }
+
     if (m_currentScreen != LOGO)
         m_backgroundMusic.Play();
 
@@ -143,6 +151,16 @@ void Game::UpdateGame(float deltaTime)
                 m_openingTransitionSound.Play();
                 TransitionToScreen(GAMEPLAY);
             }
+            else if (nextScreen == 5)
+            {
+                m_openingTransitionSound.Play();
+                TransitionToScreen(CREDITS);
+            }
+            else if (nextScreen == 6)
+            {
+                m_exitGame = true;
+                return;
+            }
 
         } break;
         case OPTIONS:
@@ -159,6 +177,19 @@ void Game::UpdateGame(float deltaTime)
             }
             //else if (FinishGameplayScreen() == 2) TransitionToScreen(TITLE);
 
+        } break;
+        case CREDITS:
+        {
+            if (nextScreen == 1)                    // Go back to TITLE screen if it was previous
+            {
+                m_endingTransitionSound.Play();
+                TransitionToScreen(TITLE);
+            }
+            else if (nextScreen == 4)               // Go back to ENDING screen if it was previous
+            {
+                m_endingTransitionSound.Play();
+                TransitionToScreen(ENDING);
+            }
         } break;
         case ENDING:
         {
@@ -202,6 +233,10 @@ void Game::ChangeToScreen(GameScreen screen)
         case GAMEPLAY: 
         {
             m_screen = std::make_unique<GameplayScreen>(m_textures, m_font, m_score);
+        } break;
+        case CREDITS:
+        {
+            m_screen = std::make_unique<CreditsScreen>(m_font, m_textures["back_button"]);
         } break;
         case ENDING: 
         {
@@ -253,6 +288,10 @@ void Game::UpdateTransition(void)
                 case GAMEPLAY:
                 {
                     m_screen = std::make_unique<GameplayScreen>(m_textures, m_font, m_score);
+                } break;
+                case CREDITS:
+                {
+                    m_screen = std::make_unique<CreditsScreen>(m_font, m_textures["back_button"]);
                 } break;
                 case ENDING:
                 {

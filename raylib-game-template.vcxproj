@@ -152,6 +152,7 @@
     <ClCompile Include="src\arrow.cpp" />
     <ClCompile Include="src\button.cpp" />
     <ClCompile Include="src\cloud.cpp" />
+    <ClCompile Include="src\credits_screen.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\ending_screen.cpp" />
     <ClCompile Include="src\gameplay_screen.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="src\arrow.hpp" />
     <ClInclude Include="src\button.hpp" />
     <ClInclude Include="src\cloud.hpp" />
+    <ClInclude Include="src\credits_screen.hpp" />
     <ClInclude Include="src\ending_screen.hpp" />
     <ClInclude Include="src\game.hpp" />
     <ClInclude Include="src\gameplay_screen.hpp" />

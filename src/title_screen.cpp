@@ -61,13 +61,27 @@ void TitleScreen::InitScreen()
 // Title Screen Update logic
 void TitleScreen::UpdateScreen(float deltaTime)
 {
-    // Press enter or tap to change to GAMEPLAY screen
+    // Button logic
     if (m_playButton.isClicked())
     {
         //finishScreen = 1;   // OPTIONS
         m_finishScreen = 2;   // GAMEPLAY
+        return;
     }
 
+    if (m_creditsButton.isClicked())
+    {
+        m_finishScreen = 5;
+        return;
+    }
+
+    // Exit out of game
+    if (m_quitButton.isClicked() || WindowShouldClose())
+    {
+        m_finishScreen = 6;     // Exit game
+        return;
+    }
+    
     m_player.update(deltaTime);
     m_playButton.update();
     m_creditsButton.update();

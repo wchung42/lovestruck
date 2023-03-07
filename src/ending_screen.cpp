@@ -51,6 +51,21 @@ void EndingScreen::InitScreen()
 // Ending Screen Update logic
 void EndingScreen::UpdateScreen(float deltaTime)
 {
+    // Press enter or tap to change to GAMEPLAY screen
+    if (m_playAgainButton.isClicked())
+    {
+        //finishScreen = 1;   // OPTIONS
+        m_finishScreen = 2;   // GAMEPLAY
+        return;
+    }
+
+    // Exit out of game
+    if (m_quitButton.isClicked() || IsKeyPressed(KEY_ESCAPE))
+    {
+        m_finishScreen = 6;
+        return;
+    }
+
     m_player.update(deltaTime);
     // Update button states
     m_playAgainButton.update();
