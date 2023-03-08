@@ -1,9 +1,6 @@
-#include "raylib.h"
-#include "./include/raylib-cpp.hpp"
 #include "screen.hpp"
 #include "title_screen.hpp"
 #include "animated_object.hpp"
-#include <iostream>
 
 //----------------------------------------------------------------------------------
 // Title Screen Functions Definition
@@ -64,15 +61,14 @@ void TitleScreen::UpdateScreen(float deltaTime)
     // Button logic
     if (m_playButton.isClicked())
     {
-        //finishScreen = 1;   // OPTIONS
-        m_finishScreen = 2;   // GAMEPLAY
+        //finishScreen = 1;     // OPTIONS
+        m_finishScreen = 2;     // GAMEPLAY
         return;
     }
 
     if (m_creditsButton.isClicked())
     {
-        std::cout << "credits button clicked" << '\n';
-        m_finishScreen = 5;
+        m_finishScreen = 5;     // CREDITS
         return;
     }
 
@@ -110,14 +106,6 @@ void TitleScreen::DrawScreen()
     m_playButton.draw();
     m_creditsButton.draw();
     m_quitButton.draw();
-
-    /*DrawLineEx(
-        Vector2 {static_cast<float>(GetScreenWidth()) / 2, 0.0f},
-        Vector2 {static_cast<float>(GetScreenWidth() / 2), static_cast<float>(GetScreenHeight())},
-        1.0f,
-        BLACK
-    );*/
-
 }
 
 // Title Screen Unload logic

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "raylib.h"
-#include "./include/raylib-cpp.hpp"
+#include "include/raylib-cpp.hpp"
 #include "screen.hpp"
 #include "player.hpp"
 #include "arrow.hpp"

@@ -1,8 +1,5 @@
-#include "raylib.h"
-#include "./include/raylib-cpp.hpp"
 #include "screen.hpp"
 #include "ending_screen.hpp"
-#include <iostream>
 
 //----------------------------------------------------------------------------------
 // Ending Screen Functions Definition
@@ -68,14 +65,13 @@ void EndingScreen::UpdateScreen(float deltaTime)
     }
 
     // Exit out of game
-    if (m_quitButton.isClicked() || IsKeyPressed(KEY_ESCAPE))
+    if (m_quitButton.isClicked() || WindowShouldClose())
     {
-        m_finishScreen = 6;
+        m_finishScreen = 6;     // Exit game
         return;
     }
 
     m_player.update(deltaTime);
-    // Update button states
     m_playAgainButton.update();
     m_creditsButton.update();
     m_quitButton.update();

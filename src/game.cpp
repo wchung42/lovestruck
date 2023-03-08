@@ -1,5 +1,3 @@
-#include "raylib.h"
-#include "include/raylib-cpp.hpp"
 #include "game.hpp"
 #include "screen.hpp"
 #include "logo_screen.hpp"
@@ -8,7 +6,6 @@
 #include "options_screen.hpp"
 #include "credits_screen.hpp"
 #include "ending_screen.hpp"
-#include <iostream>
 #include <memory>
 
 Game::Game() {}
@@ -203,7 +200,11 @@ void Game::UpdateGame(float deltaTime)
                 m_openingTransitionSound.Play();
                 TransitionToScreen(CREDITS);
             }
-
+            else if (nextScreen == 6)
+            {
+                m_exitGame = true;
+                return;
+            }
         } break;
         default: break;
     }

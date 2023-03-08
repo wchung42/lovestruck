@@ -1,9 +1,8 @@
 #include "raylib.h"
-#include "./include/raylib-cpp.hpp"
+#include "include/raylib-cpp.hpp"
 #include "screen.hpp"
 #include "gameplay_screen.hpp"
 #include "cloud.hpp"
-#include <iostream>
 
 //----------------------------------------------------------------------------------
 // Gameplay Screen Functions Definition
@@ -108,7 +107,6 @@ void GameplayScreen::UpdateScreen(float deltaTime)
 				m_sounds[1].Play();						// Play hit sound
 				m_gameOver = true;						// Set game over
 				m_player->toggleAliveStatus();			// Set player dead
-				std::cout << "Game over" << std::endl;
 			}
 			else
 				++itTarget;
