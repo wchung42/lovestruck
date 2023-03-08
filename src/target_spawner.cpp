@@ -4,15 +4,14 @@
 #include "target_medium.hpp"
 #include "target_large.hpp"
 #include <memory>
-#include <iostream>
 #include <vector>
 
 TargetSpawner::TargetSpawner(
-	float spawnRate, int minY, int maxY,
+	float spawnRate, float minSpawnRate, int minY, int maxY,
 	std::vector<raylib::Texture2DUnmanaged>& textures
-)
-	: m_spawnRate(spawnRate), m_minY(minY), m_maxY(maxY), 
-		m_textures(textures), m_mt((std::random_device())()) 
+) :	m_spawnRate(spawnRate), m_minSpawnRate(minSpawnRate),
+	m_minY(minY), m_maxY(maxY), m_textures(textures),
+	m_mt((std::random_device())()) 
 {
 }
 
@@ -58,14 +57,16 @@ void TargetSpawner::spawnTarget(std::unique_ptr<std::vector<std::unique_ptr<Targ
 
 void TargetSpawner::update(float deltaTime, std::unique_ptr<std::vector<std::unique_ptr<Target>>>& targets)
 {
-	m_timer += deltaTime;
-
-	// Increase spawn rate every 15 seconds
-	if (m_timer > 10.0f)
+	if (m_spawnRate > m_minSpawnRate)
 	{
-		m_spawnRate *= 0.9;
-		std::cout << m_spawnRate << '\n';
-		m_timer = 0.0f;
+		m_timer += deltaTime;
+
+		// Increase spawn rate every 15 seconds
+		if (m_timer > 10.0f)
+		{
+			m_spawnRate *= 0.9;
+			m_timer = 0.0f;
+		}
 	}
 		
 	if (m_spawnTimer > m_spawnRate)
