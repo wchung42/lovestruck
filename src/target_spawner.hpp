@@ -10,7 +10,8 @@
 class TargetSpawner
 {
 private:
-	float m_spawnRate {1.75f};
+	float m_spawnRate {};
+	float m_minSpawnRate {};
 	float m_spawnTimer {};
 	int m_minY {};
 	int m_maxY {};
@@ -21,6 +22,7 @@ private:
 public:
 	TargetSpawner(
 		float spawnRate,
+		float minSpawnRate,
 		int minY,
 		int maxY,
 		std::vector<raylib::Texture2DUnmanaged>& textures
