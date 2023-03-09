@@ -32,7 +32,7 @@ Keyboard:
 
 ### Links
 
- - TODO itch.io Release: $(itch.io Game Page)
+ - itch.io Release: [Download Here](https://fictionalgiggle.itch.io/lovestruck)
 
 ### License
 
