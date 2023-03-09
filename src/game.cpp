@@ -55,8 +55,8 @@ void Game::Initialize()
     m_backgroundMusic.SetLooping(true);
 
     // Load transition sounds
-    m_openingTransitionSound = raylib::Sound::Sound("./src/resources/sfx/gameplay_opening_transition.mp3");
-    m_endingTransitionSound = raylib::Sound::Sound("./src/resources/sfx/gameplay_ending_transition.mp3");
+    m_openingTransitionSound = raylib::Sound("./src/resources/sfx/gameplay_opening_transition.mp3");
+    m_endingTransitionSound = raylib::Sound("./src/resources/sfx/gameplay_ending_transition.mp3");
 
     m_score = std::make_shared<int>();
 }

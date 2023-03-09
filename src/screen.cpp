@@ -1,7 +1,4 @@
-#include "raylib.h"
-#include "include/raylib-cpp.hpp"
 #include "screen.hpp"
-#include <iostream>
 
 Screen::Screen() {}
 
@@ -61,6 +58,6 @@ void Screen::initializeSounds(
 	for (auto& path : soundPaths)
 	{
 		//raylib::Sound sound(path);
-		sounds.push_back(raylib::Sound::Sound(path));
+		sounds.push_back(raylib::Sound(path));
 	}
 }

@@ -1,5 +1,3 @@
-#include "raylib.h"
-#include "include/raylib-cpp.hpp"
 #include "screen.hpp"
 #include "logo_screen.hpp"
 #include <iostream>

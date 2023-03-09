@@ -1,5 +1,4 @@
 #include "target_medium.hpp"
-#include <iostream>
 
 TargetMedium::TargetMedium(
 	raylib::Vector2 pos,

@@ -1,5 +1,4 @@
 #include "cloud.hpp"
-#include <iostream>
 
 Cloud::Cloud() {};
 

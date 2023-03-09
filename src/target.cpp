@@ -1,5 +1,4 @@
 #include "target.hpp"
-#include <iostream>
 
 Target::Target(
 	raylib::Vector2 pos,
