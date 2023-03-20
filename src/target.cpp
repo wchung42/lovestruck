@@ -1,5 +1,8 @@
 #include "target.hpp"
 
+// ----------------------------------------------
+// Base target class definitions
+// ----------------------------------------------
 Target::Target(
 	raylib::Vector2 pos,
 	raylib::Texture2DUnmanaged& aliveTexture,
@@ -75,4 +78,81 @@ Rectangle Target::getCollisionRec()
 		scaledHeight - (2.0f * yOffset)
 	};
 	return rec;
+}
+
+// ----------------------------------------------
+// Small target class definitions
+// ----------------------------------------------
+TargetSmall::TargetSmall(
+	Vector2 pos,
+	raylib::Texture2DUnmanaged& activeTexture,
+	raylib::Texture2DUnmanaged& endingTexture
+) : Target(pos, activeTexture, endingTexture)
+{
+	m_maxFrames = 2;
+	m_width = m_texture.width / m_maxFrames;
+	m_height = m_texture.height;
+	m_velocity = 300.0f;
+	m_scale = 0.3f; // 0.3f
+	m_health = 1; // 1 hit to destroy
+	m_score = 1;
+}
+
+TargetSmall::~TargetSmall() {};
+
+void TargetSmall::onHit()
+{
+	Target::onHit();
+}
+
+// ----------------------------------------------
+// Medium target class definitions
+// ----------------------------------------------
+TargetMedium::TargetMedium(
+	raylib::Vector2 pos,
+	raylib::Texture2DUnmanaged& aliveTexture,
+	raylib::Texture2DUnmanaged& endingTexture
+) : Target(pos, aliveTexture, endingTexture)
+{
+	m_maxFrames = 3;
+	m_width = m_texture.width / m_maxFrames;
+	m_height = m_texture.height;
+	m_velocity = 250.0f;
+	m_scale = 0.6f;
+	m_health = 2; // 2 hits to destroy
+	m_score = 2;
+}
+
+TargetMedium::~TargetMedium() {};
+
+void TargetMedium::onHit()
+{
+	Target::onHit();
+	this->m_frame++;
+}
+
+// ----------------------------------------------
+// Large target class definitions
+// ----------------------------------------------
+TargetLarge::TargetLarge(
+	raylib::Vector2 pos,
+	raylib::Texture2DUnmanaged& aliveTexture,
+	raylib::Texture2DUnmanaged& endingTexture
+) : Target(pos, aliveTexture, endingTexture)
+{
+	m_maxFrames = 4;
+	m_width = m_texture.width / m_maxFrames;
+	m_height = m_texture.height;
+	m_velocity = 200.0f;
+	m_scale = 1.0f;
+	m_health = 3; // 3 hits to destroy
+	m_score = 3;
+}
+
+TargetLarge::~TargetLarge() {};
+
+void TargetLarge::onHit()
+{
+	Target::onHit();
+	this->m_frame++;
 }

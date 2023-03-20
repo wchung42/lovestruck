@@ -1,11 +1,6 @@
 #include "game.hpp"
 #include "screen.hpp"
-#include "logo_screen.hpp"
-#include "title_screen.hpp"
-#include "gameplay_screen.hpp"
-#include "options_screen.hpp"
-#include "credits_screen.hpp"
-#include "ending_screen.hpp"
+#include "utils.hpp"
 #include <memory>
 
 Game::Game() {}
@@ -18,16 +13,15 @@ void Game::Initialize()
 	m_window.raylib::Window::Init(m_windowWidth, m_windowHeight, m_title);
     SetExitKey(0);
 
-    // Setup and init first screen
+    // Setup first screen
     m_currentScreen = LOGO;
     m_screen = std::make_unique<LogoScreen>();
-    m_screen->InitScreen();
 
     m_window.SetTargetFPS(m_targetFPS);       // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     // Load textures
-    initializeTextures({
+    utils::initializeTextures({
         "./src/resources/textures/cupid.png",
         "./src/resources/textures/bow_loaded.png",
         "./src/resources/textures/bow_unloaded.png",
@@ -43,7 +37,9 @@ void Game::Initialize()
         "./src/resources/textures/credits_button.png",
         "./src/resources/textures/quit_button.png",
         "./src/resources/textures/play_again_button.png",
-        "./src/resources/textures/back_button.png"
+        "./src/resources/textures/back_button.png",
+        "./src/resources/textures/firerate_powerup.png",
+        "./src/resources/textures/freeze_powerup.png"
     }, m_textures);
 
     // Load font
@@ -82,29 +78,6 @@ void Game::Shutdown()
 	m_window.Close();
 }
 
-void Game::initializeTextures(
-    const std::vector<std::string>& texturePaths,
-    std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures
-)
-{
-    // Load textures into GPU
-    for (auto& path : texturePaths)
-    {
-        raylib::Texture2DUnmanaged texture(path);
-        // Get name of file as key
-        std::string baseFilename = path.substr(path.find_last_of("/\\") + 1);
-        std::string::size_type const p(baseFilename.find_last_of('.'));
-        std::string fileWithoutExtension = baseFilename.substr(0, p);
-        textures[fileWithoutExtension] = texture;
-    }
-
-    // Set textures to filter_bilinear flag for better scaling
-    for (auto& [name, texture] : textures)
-    {
-        SetTextureFilter(texture, TEXTURE_FILTER_BILINEAR);
-    }
-}
-
 void Game::UpdateGame(float deltaTime)
 {
     if (WindowShouldClose())
@@ -127,7 +100,7 @@ void Game::UpdateGame(float deltaTime)
     }
 
     m_screen->UpdateScreen(deltaTime);
-    int nextScreen {m_screen->GetFinishScreen()};
+    int nextScreen {m_screen->getNextScreen()};
     switch (m_currentScreen)
     {
         case LOGO:
@@ -228,8 +201,6 @@ void Game::ChangeToScreen(GameScreen screen)
 {
     // Save previous screen
     m_prevScreen = m_currentScreen;
-    // Unload current screen
-    m_screen->UnloadScreen();
 
     // Init next screen
     switch (screen)
@@ -257,7 +228,6 @@ void Game::ChangeToScreen(GameScreen screen)
         } break;
         default: break;
     }
-    m_screen->InitScreen();
     m_currentScreen = screen;
 }
 
@@ -286,8 +256,6 @@ void Game::UpdateTransition()
 
             // Save previous screen
             m_prevScreen = m_currentScreen;
-            // Unload current screen
-            m_screen->UnloadScreen();
 
             // Load next screen
             switch (m_transToScreen)
@@ -315,7 +283,6 @@ void Game::UpdateTransition()
                 } break;
                 default: break;
             }
-            m_screen->InitScreen();
 
             m_currentScreen = m_transToScreen;
 

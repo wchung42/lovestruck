@@ -49,6 +49,8 @@ public:
 	int getHeight() const { return m_height; }
 	Vector2 getPos() const { return m_pos; }
 	bool getHasArrow() const { return m_hasArrow; }
+	float getFireRate() const { return m_fireRate; }
+	void setFireRate(float newFireRate) { m_fireRate = newFireRate; }
 	void toggleAliveStatus() { m_alive = false; }
 	bool isReadyForEnd() const { return m_readyForEndScreen; }
 	void update(float deltaTime);

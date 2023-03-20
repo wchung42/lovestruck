@@ -35,10 +35,53 @@ public:
 	Vector2 getPos() const { return m_pos; }
 	int getHealth() const { return m_health; }
 	int getScore() const { return m_score; }
-	bool getCollisionsOn() const { return m_collisionsOn; }
+	bool areCollisionsOn() const { return m_collisionsOn; }
+	void setVelocity(float newVelocity) { m_velocity = newVelocity; }
 	virtual void onHit();
 	bool readyToDelete() { return m_readyToDelete; }
 	void update(float deltaTime);
 	void draw();
 	Rectangle getCollisionRec();
+};
+
+
+// Small target
+class TargetSmall : public Target
+{
+public:
+	TargetSmall(
+		Vector2 pos,
+		raylib::Texture2DUnmanaged& activeTexture,
+		raylib::Texture2DUnmanaged& endingTexture
+	);
+	~TargetSmall();
+	void onHit();
+};
+
+
+// Medium target
+class TargetMedium : public Target
+{
+public:
+	TargetMedium(
+		raylib::Vector2 pos,
+		raylib::Texture2DUnmanaged& aliveTexture,
+		raylib::Texture2DUnmanaged& endingTexture
+	);
+	~TargetMedium();
+	void onHit();
+};
+
+
+// Large target
+class TargetLarge : public Target
+{
+public:
+	TargetLarge(
+		raylib::Vector2 pos,
+		raylib::Texture2DUnmanaged& activeTexture,
+		raylib::Texture2DUnmanaged& endingTexture
+	);
+	~TargetLarge();
+	void onHit();
 };

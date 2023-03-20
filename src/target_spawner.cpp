@@ -1,8 +1,5 @@
 #include "target_spawner.hpp"
 #include "target.hpp"
-#include "target_small.hpp"
-#include "target_medium.hpp"
-#include "target_large.hpp"
 #include <memory>
 #include <vector>
 
