@@ -1,3 +1,6 @@
 .vs/
 .vscode/
 bin/
+.exe
+lovestruck.vcxproj.filters
+lovestruck.vcxproj.user
