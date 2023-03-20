@@ -1,5 +1,3 @@
-#include "raylib.h"
-#include "./include/raylib-cpp.hpp"
 #include "player.hpp"
 #include "arrow.hpp"
 #include <memory>

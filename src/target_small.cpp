@@ -1,5 +1,4 @@
 #include "target_small.hpp"
-#include <iostream>
 
 TargetSmall::TargetSmall(
 	Vector2 pos,

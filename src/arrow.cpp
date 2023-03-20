@@ -1,7 +1,4 @@
-#include "raylib.h"
-#include "./include/raylib-cpp.hpp"
 #include "Arrow.hpp"
-#include <iostream>
 
 Arrow::Arrow(raylib::Vector2 pos, raylib::Texture2DUnmanaged& arrowTexture)
 	: m_pos(pos)

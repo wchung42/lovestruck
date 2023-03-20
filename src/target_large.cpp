@@ -1,6 +1,4 @@
-#include "raylib.h"
 #include "target_large.hpp"
-#include <iostream>
 
 TargetLarge::TargetLarge(
 	raylib::Vector2 pos,

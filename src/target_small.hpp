@@ -1,4 +1,5 @@
 #pragma once
+
 #include "target.hpp"
 
 class TargetSmall : public Target
