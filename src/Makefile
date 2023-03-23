@@ -379,20 +379,14 @@ PROJECT_SOURCE_FILES ?= \
     arrow.cpp \
     button.cpp \
     cloud.cpp \
-    credits_screen.cpp \
-    ending_screen.cpp \
     game.cpp \
-    gameplay_screen.cpp \
-    logo_screen.cpp \
-    options_screen.cpp \
     player.cpp \
     screen.cpp \
     target.cpp \
-    target_large.cpp \
-    target_medium.cpp \
-    target_small.cpp \
     target_spawner.cpp \
-    title_screen.cpp \
+    powerup.cpp \
+    texture_manager.cpp \
+    sound_manager.cpp
 
 # Define all object files from source files
 OBJS = $(patsubst %.c, %.o, $(PROJECT_SOURCE_FILES))

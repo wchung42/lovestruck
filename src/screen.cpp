@@ -1,4 +1,5 @@
 #include "screen.hpp"
+#include <time.h>
 
 //----------------------------------------------------------------------------------
 // Base Screen Function Definitions
