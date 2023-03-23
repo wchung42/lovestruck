@@ -112,7 +112,7 @@ PowerUpSpawner::PowerUpSpawner(
 	std::shared_ptr<SoundManager> soundManager,
 	std::unique_ptr<Player>& player,
 	std::vector<std::unique_ptr<Target>>& targets,
-	std::mt19937& mt
+	std::shared_ptr<std::mt19937> mt
 ) : m_textureManager(textureManager), m_soundManager(soundManager),
 	m_player(player), m_targets(targets), m_mt(mt)
 {
@@ -142,11 +142,11 @@ std::unique_ptr<PowerUp> PowerUpSpawner::spawnPowerUp()
 
 	// Select power up to spawn
 	std::uniform_int_distribution<int> powerUpDist(0, 100);
-	int powerUpToSpawn {powerUpDist(m_mt)};
+	int powerUpToSpawn {powerUpDist(*m_mt)};
 
 	// Get random spawn position
 	std::uniform_int_distribution<int> spawnPosYDist(GetScreenHeight() * 0.2f, GetScreenHeight() * 0.8f);
-	int spawnYPos {spawnPosYDist(m_mt)};
+	int spawnYPos {spawnPosYDist(*m_mt)};
 	raylib::Vector2 spawnPos {
 		static_cast<float>(GetScreenWidth()),
 		static_cast<float>(spawnYPos)

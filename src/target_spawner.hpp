@@ -18,7 +18,7 @@ private:
 	int m_maxY {};
 	float m_timer {};
 	std::shared_ptr<TextureManager> m_textureManager;
-	std::mt19937& m_mt;
+	std::shared_ptr<std::mt19937> m_mt;
 public:
 	TargetSpawner(
 		float spawnRate,
@@ -26,7 +26,7 @@ public:
 		int minY,
 		int maxY,
 		std::shared_ptr<TextureManager> textureManager,
-		std::mt19937& mt
+		std::shared_ptr<std::mt19937> mt
 	);
 	~TargetSpawner();
 	raylib::Vector2 calculateSpawnPosition(const raylib::Texture2DUnmanaged& texture, float scale);

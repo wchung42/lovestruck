@@ -125,7 +125,7 @@ private:
 	//std::vector<raylib::Sound> m_sounds;
 	//std::unique_ptr<SoundManager>& m_soundManager;
 	const raylib::Font& m_font;
-	std::mt19937 m_mt;
+	std::shared_ptr<std::mt19937> m_mt;
 public:
 	GameplayScreen(
 		std::shared_ptr<TextureManager> textureManager,
