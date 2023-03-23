@@ -2,15 +2,18 @@
 
 #include "include/raylib.h"
 #include "include/raylib-cpp.hpp"
+#include "sound_manager.hpp"
 #include "player.hpp"
 #include "arrow.hpp"
 #include "target.hpp"
+#include "powerup.hpp"
 #include "target_spawner.hpp"
 #include "cloud.hpp"
 #include "button.hpp"
 #include "animated_object.hpp"
 #include <string>
 #include <unordered_map>
+#include <random>
 
 //----------------------------------------------------------------------------------
 // Base screen class declaration
@@ -23,9 +26,14 @@ protected:
 	int m_framesCounter {};
 	int m_nextScreen {};
 	std::unordered_map<std::string, raylib::Texture2DUnmanaged> m_textures;
+	std::shared_ptr<SoundManager> m_soundManager;
 public:
 	Screen();
-	Screen(std::unordered_map<std::string, raylib::Texture2DUnmanaged> textures);
+	Screen(std::shared_ptr<SoundManager> soundManager);
+	Screen(
+		std::unordered_map<std::string, raylib::Texture2DUnmanaged> textures,
+		std::shared_ptr<SoundManager> soundManager
+	);
 	virtual ~Screen();
 	virtual void UpdateScreen(float deltaTime);
 	virtual void DrawScreen();
@@ -87,7 +95,8 @@ private:
 	Button m_quitButton;
 public:
 	TitleScreen(
-		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures
+		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+		std::shared_ptr<SoundManager> soundManager
 	);
 	~TitleScreen();
 	void UpdateScreen(float deltaTime);
@@ -102,17 +111,24 @@ class GameplayScreen : public Screen
 {
 private:
 	std::unique_ptr<Player> m_player;
-	std::unique_ptr<std::vector<std::shared_ptr<Arrow>>> m_arrows;
-	std::unique_ptr<std::vector<std::unique_ptr<Target>>> m_targets;
-	std::unique_ptr<TargetSpawner> m_spawner;
+	std::vector<std::unique_ptr<Arrow>> m_arrows;
+	std::vector<std::unique_ptr<Target>> m_targets;
+	std::unique_ptr<TargetSpawner> m_targetSpawner;
+	std::unique_ptr<PowerUp> m_powerup;
+	std::unique_ptr<PowerUpSpawner> m_powerupSpawner;
 	std::vector<Cloud> m_clouds;
-	std::vector<raylib::Sound> m_sounds;
 	std::shared_ptr<int> m_score;
 	bool m_gameOver {};
+
+	// Resources
+	//std::vector<raylib::Sound> m_sounds;
+	//std::unique_ptr<SoundManager>& m_soundManager;
 	const raylib::Font& m_font;
+	std::mt19937 m_mt;
 public:
 	GameplayScreen(
 		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+		std::shared_ptr<SoundManager> soundManager,
 		const raylib::Font& font,
 		std::shared_ptr<int> score
 	);
@@ -151,6 +167,7 @@ private:
 	raylib::Text m_sfxText;
 public:
 	CreditsScreen(
+		std::shared_ptr<SoundManager> soundManager,
 		raylib::Font& font,
 		raylib::Texture2DUnmanaged backButtonTexture,
 		GameScreen prevScreen
@@ -177,6 +194,7 @@ private:
 public:
 	EndingScreen(
 		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+		std::shared_ptr<SoundManager> soundManager,
 		const raylib::Font& font,
 		const std::shared_ptr<int> m_score
 	);

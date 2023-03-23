@@ -5,14 +5,18 @@
 
 TargetSpawner::TargetSpawner(
 	float spawnRate, float minSpawnRate, int minY, int maxY,
-	std::vector<raylib::Texture2DUnmanaged>& textures
+	std::vector<raylib::Texture2DUnmanaged>& textures, std::mt19937& mt
 ) :	m_spawnRate(spawnRate), m_minSpawnRate(minSpawnRate),
 	m_minY(minY), m_maxY(maxY), m_textures(textures),
-	m_mt((std::random_device())()) 
+	m_mt(mt) 
 {
+
 }
 
-TargetSpawner::~TargetSpawner() {};
+TargetSpawner::~TargetSpawner() 
+{
+
+}
 
 raylib::Vector2 TargetSpawner::calculateSpawnPosition(const raylib::Texture2DUnmanaged& texture, float scale)
 {
@@ -22,7 +26,7 @@ raylib::Vector2 TargetSpawner::calculateSpawnPosition(const raylib::Texture2DUnm
 	return spawnPos;
 }
 
-void TargetSpawner::spawnTarget(std::unique_ptr<std::vector<std::unique_ptr<Target>>>& targets)
+void TargetSpawner::spawnTarget(std::vector<std::unique_ptr<Target>>& targets)
 {
 	// Get random target type to spawn
 	// 60% small, 30% medium, 10% large
@@ -49,10 +53,10 @@ void TargetSpawner::spawnTarget(std::unique_ptr<std::vector<std::unique_ptr<Targ
 			m_textures[2],
 			m_textures[3]
 		);
-	targets->push_back(std::move(target));
+	targets.push_back(std::move(target));
 }
 
-void TargetSpawner::update(float deltaTime, std::unique_ptr<std::vector<std::unique_ptr<Target>>>& targets)
+void TargetSpawner::update(float deltaTime, std::vector<std::unique_ptr<Target>>& targets)
 {
 	if (m_spawnRate > m_minSpawnRate)
 	{

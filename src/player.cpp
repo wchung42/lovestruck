@@ -1,14 +1,13 @@
 #include "player.hpp"
 #include "arrow.hpp"
 #include <memory>
-#include <iostream>
 
 Player::Player(
-	raylib::Texture2DUnmanaged& playerAliveTexture,
-	raylib::Texture2DUnmanaged& playerDeadTexture,
-	raylib::Texture2DUnmanaged& arrowTexture,
-	raylib::Texture2DUnmanaged& bowLoadedTexture,
-	raylib::Texture2DUnmanaged& bowNotLoadedTexture,
+	const raylib::Texture2DUnmanaged& playerAliveTexture,
+	const raylib::Texture2DUnmanaged& playerDeadTexture,
+	const raylib::Texture2DUnmanaged& arrowTexture,
+	const raylib::Texture2DUnmanaged& bowLoadedTexture,
+	const raylib::Texture2DUnmanaged& bowNotLoadedTexture,
 	int maxFrames, float updateTime
 )	:	m_playerTexture(playerAliveTexture), m_playerAliveTexture(playerAliveTexture),
 		m_playerDeadTexture(playerDeadTexture), m_arrowTexture(arrowTexture),
@@ -25,7 +24,7 @@ Player::Player(
 		m_pos.x + static_cast<float>(m_scale * m_width * arrowXOffset),
 		m_pos.y + static_cast<float>(m_scale * m_height * arrowYOffset)
 	};
-	m_arrow = std::make_shared<Arrow>(arrowPos, arrowTexture);
+	m_arrow = std::make_unique<Arrow>(arrowPos, m_arrowTexture);
 }
 
 Player::~Player() {}
@@ -141,22 +140,22 @@ void Player::reload()
 		m_pos.x + static_cast<float>(m_scale * m_width * arrowXOffset),
 		m_pos.y + static_cast<float>(m_scale * m_height * arrowYOffset)
 	};
-	m_arrow = std::make_shared<Arrow>(arrowPos, m_arrowTexture);
+	m_arrow = std::make_unique<Arrow>(arrowPos, m_arrowTexture);
 	m_hasArrow = true;
 }
 
-std::shared_ptr<Arrow> Player::shoot()
+std::unique_ptr<Arrow> Player::shoot()
 {
 	if (m_hasArrow)
 	{
 		m_arrow->move();
 		m_hasArrow = false;
-		return m_arrow;
+		return std::move(m_arrow);
 	}
 	return nullptr;
 }
 
-Rectangle Player::getCollisionRec()
+raylib::Rectangle Player::getCollisionRec()
 {
 	float scaledWidth {m_width * m_scale};
 	float scaledHeight {m_height * m_scale};

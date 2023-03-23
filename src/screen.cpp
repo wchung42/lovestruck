@@ -6,10 +6,18 @@
 //----------------------------------------------------------------------------------
 Screen::Screen() {}
 
-
-Screen::Screen(std::unordered_map<std::string, raylib::Texture2DUnmanaged> textures) 
-	: m_textures(textures)
+Screen::Screen(std::shared_ptr<SoundManager> soundManager)
+	: m_soundManager(soundManager)
 {
+	
+}
+
+Screen::Screen(
+	std::unordered_map<std::string, raylib::Texture2DUnmanaged> textures,
+	std::shared_ptr<SoundManager> soundManager
+) 	: m_textures(textures), m_soundManager(soundManager)
+{
+
 }
 
 
@@ -181,8 +189,9 @@ void OptionsScreen::DrawScreen()
 // Title Screen Function Definitions
 //----------------------------------------------------------------------------------
 TitleScreen::TitleScreen(
-    std::unordered_map<std::string, raylib::Texture2DUnmanaged>&textures
-) : Screen(textures)
+    std::unordered_map<std::string, raylib::Texture2DUnmanaged>&textures,
+	std::shared_ptr<SoundManager> soundManager
+) : Screen(textures, soundManager)
 {
 	// Title 
 	m_titleTexture = m_textures["title"];
@@ -233,6 +242,7 @@ void TitleScreen::UpdateScreen(float deltaTime)
     // Button logic
     if (m_playButton.isClicked())
     {
+		m_soundManager->playSound("button_click");
         //finishScreen = 1;     // OPTIONS
         m_nextScreen = 2;     // GAMEPLAY
         return;
@@ -240,6 +250,7 @@ void TitleScreen::UpdateScreen(float deltaTime)
 
     if (m_creditsButton.isClicked())
     {
+		m_soundManager->playSound("button_click");
         m_nextScreen = 5;     // CREDITS
         return;
     }
@@ -247,6 +258,7 @@ void TitleScreen::UpdateScreen(float deltaTime)
     // Exit out of game
     if (m_quitButton.isClicked() || WindowShouldClose())
     {
+		m_soundManager->playSound("button_click");
         m_nextScreen = 6;     // Exit game
         return;
     }
@@ -286,15 +298,19 @@ void TitleScreen::DrawScreen()
 //----------------------------------------------------------------------------------
 GameplayScreen::GameplayScreen(
 	std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+	std::shared_ptr<SoundManager> soundManager,
 	const raylib::Font& font,
-	std::shared_ptr<int> score)
-	: Screen(textures), m_font(font), m_score(score)
+	std::shared_ptr<int> score
+)	:	Screen(textures, soundManager), m_font(font), m_score(score),
+		m_mt(static_cast<unsigned int>(time(nullptr)))
 {
 	// Load sounds
-	utils::initializeSounds({
+	m_soundManager->loadSounds(std::vector<std::string> {
 		"./src/resources/sfx/arrow_whoosh.mp3",
-		"./src/resources/sfx/heart_hit.wav"
-		}, m_sounds);
+		"./src/resources/sfx/heart_hit.wav",
+		"./src/resources/sfx/firerateup_sfx.mp3",
+		"./src/resources/sfx/freeze_sfx.mp3"
+	});
 
 	// Initialize player
 	Vector2 startPos {0.0f, static_cast<float>(GetScreenHeight() / 2)};
@@ -305,11 +321,11 @@ GameplayScreen::GameplayScreen(
 		m_textures["bow_loaded"],			// Loaded bow texture
 		m_textures["bow_unloaded"],			// Unloaded bow texture
 		2,									// Max frames
-		1.0f / 1.5f							// Update time
-		);
+		1.0f / 1.5f						// Update time
+	);
 
-	// Initialize arrows vector
-	m_arrows = std::make_unique<std::vector<std::shared_ptr<Arrow>>>();
+	// Initialize powerup spawner
+	m_powerupSpawner = std::make_unique<PowerUpSpawner>(m_textures, m_soundManager, m_player, m_targets, m_mt);
 
 	// Initialize target spawner
 	float targetSpawnRate {1.5f};								// Base spawn rate
@@ -320,16 +336,16 @@ GameplayScreen::GameplayScreen(
 		m_textures["hearts_03"],
 		m_textures["heart_end"]
 	};
-	m_spawner = std::make_unique<TargetSpawner>(
+	m_targetSpawner = std::make_unique<TargetSpawner>(
 		targetSpawnRate,									// Base spawn rate
 		minTargetSpawnRate,									// Minimum spawn rate
 		m_player->getHeight() / 2,							// Min y player is able to shoot
 		GetScreenHeight() - (m_player->getHeight() / 2),	// Max y player is able to shoot
-		heartTextures										// Target textures
-		);
-	// Initialize targets vector
-	m_targets = std::make_unique<std::vector<std::unique_ptr<Target>>>();
+		heartTextures,										// Target textures
+		m_mt												// Random num generator
+	);
 
+	// Initialize clouds
 	raylib::Vector2 cloudPosition1 {
 		0.0f,
 		static_cast<float>(GetScreenHeight() - m_textures["clouds"].height / 2)
@@ -347,8 +363,8 @@ GameplayScreen::GameplayScreen(
 GameplayScreen::~GameplayScreen() 
 {
 	// Unload sounds
-	for (auto& sound : m_sounds)
-		sound.Unload();
+	/*for (auto& sound : m_sounds)
+		sound.Unload();*/
 }
 
 
@@ -363,43 +379,59 @@ void GameplayScreen::UpdateScreen(float deltaTime)
 	{
 		if (IsKeyPressed(KEY_SPACE))
 		{
-			std::shared_ptr<Arrow> arrowShot = m_player->shoot();
+			std::unique_ptr<Arrow> arrowShot = m_player->shoot();
 			if (arrowShot)
 			{
-				m_arrows->push_back(arrowShot);
-				m_sounds[0].Play();
+				m_arrows.push_back(std::move(arrowShot));
+				m_soundManager->playSound("arrow_whoosh");
 			}
 		}
 
-		//////////////////////////
-		/* Check for collisions */
-		//////////////////////////
+		//---------------------------
+		// Check collisions 
+		//---------------------------
+
+		if (m_powerup)
+		{
+			// Check powerup collision with player
+			if (m_player->getCollisionRec().CheckCollision(m_powerup->getCollisionRec()))
+			{
+				m_powerup->onCollision();
+				m_powerup.reset();
+			}
+			// Check powerup collision with left side of the screen
+			else if (m_powerup->getPos().GetX() < 0)
+			{
+				m_powerup.reset();
+			}
+		}
 
 		// Check target collision with player
-		for (auto itTarget = m_targets->begin(); itTarget != m_targets->end();)
+		for (auto itTarget = m_targets.begin(); itTarget != m_targets.end();)
 		{
 			if (CheckCollisionRecs(m_player->getCollisionRec(), (*itTarget)->getCollisionRec()))
 			{
-				itTarget = m_targets->erase(itTarget);
-				m_sounds[1].Play();						// Play hit sound
-				m_gameOver = true;						// Set game over
-				m_player->toggleAliveStatus();			// Set player dead
+				itTarget = m_targets.erase(itTarget);
+				m_soundManager->playSound("heart_hit");		// Play hit sound
+				m_gameOver = true;							// Set game over
+				m_player->toggleAliveStatus();				// Set player dead
 			}
 			else
 				++itTarget;
 		}
 
 		// Check for collisions of arrows and targets
-		for (auto itArrow = m_arrows->begin(); itArrow != m_arrows->end();)
+		for (auto itArrow = m_arrows.begin(); itArrow != m_arrows.end();)
 		{
-			for (auto itTarget = m_targets->begin(); itTarget != m_targets->end();)
+			for (auto itTarget = m_targets.begin(); itTarget != m_targets.end();)
 			{
 
 				// Target collided with arrow
-				if ((*itTarget)->areCollisionsOn() && CheckCollisionRecs((*itArrow)->getCollisionRec(), (*itTarget)->getCollisionRec()))
+				if ((*itTarget)->areCollisionsOn() && 
+					CheckCollisionRecs((*itArrow)->getCollisionRec(), (*itTarget)->getCollisionRec()))
 				{
-					m_sounds[1].Play();
-					itArrow = m_arrows->erase(itArrow);
+					m_soundManager->playSound("heart_hit");
+					itArrow = m_arrows.erase(itArrow);
 					(*itTarget)->onHit();
 
 					// Score calculation
@@ -414,57 +446,64 @@ void GameplayScreen::UpdateScreen(float deltaTime)
 				else
 					++itTarget;
 			}
-			if (itArrow != m_arrows->end())
+			if (itArrow != m_arrows.end())
 				++itArrow;
 		}
 
 		// Check arrow out of bounds collision
-		for (auto itArrow = m_arrows->begin(); itArrow != m_arrows->end();)
+		for (auto itArrow = m_arrows.begin(); itArrow != m_arrows.end();)
 		{
 			if ((*itArrow)->getPos().x > GetScreenWidth())
 			{
-				itArrow = m_arrows->erase(itArrow);
+				itArrow = m_arrows.erase(itArrow);
 			}
 			else
 				++itArrow;
 		}
 
 		// Check target out of bounds
-		for (auto itTarget = m_targets->begin(); itTarget != m_targets->end();)
+		for (auto itTarget = m_targets.begin(); itTarget != m_targets.end();)
 		{
 			if ((*itTarget)->readyToDelete())
-				itTarget = m_targets->erase(itTarget);
+				itTarget = m_targets.erase(itTarget);
 			else if ((*itTarget)->getPos().x + static_cast<float>((*itTarget)->getWidth()) < 0.0f)
-				itTarget = m_targets->erase(itTarget);
+				itTarget = m_targets.erase(itTarget);
 			else
 				++itTarget;
 		}
 
-		/////////////////////////
-		/* Update game objects */
-		/////////////////////////
+		//------------------------
+		// Update game objects 
+		//------------------------
 
 		// Update clouds
 		for (auto& cloud : m_clouds)
 			cloud.update(deltaTime);
 
 		// Update arrows
-		for (auto& arrow : *m_arrows)
+		for (auto& arrow : m_arrows)
 		{
 			arrow->update(deltaTime);
 		}
 
 		// Update target spawner
-		m_spawner->update(deltaTime, m_targets);
+		m_targetSpawner->update(deltaTime, m_targets);
 
 		// Update targets
-		for (auto& target : *m_targets)
+		for (auto& target : m_targets)
 		{
 			target->update(deltaTime);
 		}
+
+		// Update powerup spawner
+		m_powerupSpawner->update(deltaTime, m_powerup);
+
+		// Update powerup
+		if (m_powerup)
+			m_powerup->update(deltaTime);
 	}
 
-	// Update player
+	// Update player here bc player might be in ending animation
 	m_player->update(deltaTime);
 
 }
@@ -478,14 +517,18 @@ void GameplayScreen::DrawScreen()
 	// Draw player
 	m_player->draw();
 
+	// Draw powerup
+	if (m_powerup)
+		m_powerup->draw();
+
 	// Draw arrows
-	for (auto& arrow : *m_arrows)
+	for (auto& arrow : m_arrows)
 	{
 		arrow->draw();
 	}
 
 	// Draw targets
-	for (auto& target : *m_targets)
+	for (auto& target : m_targets)
 	{
 		target->draw();
 	}
@@ -499,16 +542,11 @@ void GameplayScreen::DrawScreen()
 		BLACK
 	);
 
-	/*raylib::Text scoreText(
-		std::to_string(*m_score),
-		75.0f,
-		BLACK,
-		GetFontDefault(),
-		3.0f
-	);*/
 	scoreText.Draw(raylib::Vector2 {static_cast<float>((GetScreenWidth() / 2) - (scoreText.Measure() / 2)), 25});
 
-	// FPS counter
+	//---------------
+	// Draw FPS counter
+	//---------------
 	/*raylib::Text fpsText(
 		std::to_string(GetFPS()),
 		20.0f,
@@ -524,10 +562,11 @@ void GameplayScreen::DrawScreen()
 // Credit Screen Function Definitions
 //----------------------------------------------------------------------------------
 CreditsScreen::CreditsScreen(
+	std::shared_ptr<SoundManager> soundManager,
 	raylib::Font& font,
 	raylib::Texture2DUnmanaged backButtonTexture,
 	GameScreen prevScreen
-) : m_font(font), m_backButtonTexture(backButtonTexture), m_prevScreen(prevScreen)
+) : Screen(soundManager), m_font(font), m_backButtonTexture(backButtonTexture), m_prevScreen(prevScreen)
 {
 	// Initialize headings and text
 	float headingTextYOffset {15.0f};
@@ -631,9 +670,11 @@ CreditsScreen::~CreditsScreen()
 
 void CreditsScreen::UpdateScreen(float deltaTime)
 {
-	// Do nothing
 	if (m_backButton.isClicked())
-		m_nextScreen = m_prevScreen;			// Return to previous screen
+	{
+		m_soundManager->playSound("button_click");
+		m_nextScreen = m_prevScreen;					// Return to previous screen
+	}
 
 	m_backButton.update();
 }
@@ -676,9 +717,10 @@ void CreditsScreen::DrawScreen()
 //----------------------------------------------------------------------------------
 EndingScreen::EndingScreen(
 	std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+	std::shared_ptr<SoundManager> soundManager,
 	const raylib::Font& font,
-	std::shared_ptr<int> score)
-	: Screen(textures), m_font(font), m_score(score)
+	std::shared_ptr<int> score
+)	: Screen(textures, soundManager), m_font(font), m_score(score)
 {
 	// Initialize Player
 	float playerScale {1.0f};
@@ -719,6 +761,7 @@ void EndingScreen::UpdateScreen(float deltaTime)
 	// Press enter or tap to change to GAMEPLAY screen
 	if (m_playAgainButton.isClicked())
 	{
+		m_soundManager->playSound("button_click");
 		//finishScreen = 1;     // OPTIONS
 		m_nextScreen = 3;     // GAMEPLAY
 		return;
@@ -727,6 +770,7 @@ void EndingScreen::UpdateScreen(float deltaTime)
 	// Show credits
 	if (m_creditsButton.isClicked())
 	{
+		m_soundManager->playSound("button_click");
 		m_nextScreen = 5;     // CREDITS
 		return;
 	}
@@ -734,6 +778,7 @@ void EndingScreen::UpdateScreen(float deltaTime)
 	// Exit out of game
 	if (m_quitButton.isClicked() || WindowShouldClose())
 	{
+		m_soundManager->playSound("button_click");
 		m_nextScreen = 6;     // Exit game
 		return;
 	}

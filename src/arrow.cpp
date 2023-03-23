@@ -1,9 +1,8 @@
 #include "Arrow.hpp"
 
 Arrow::Arrow(raylib::Vector2 pos, raylib::Texture2DUnmanaged& arrowTexture)
-	: m_pos(pos)
+	: m_pos(pos), m_arrowTexture(arrowTexture)
 {
-	m_arrowTexture = arrowTexture;
 	m_width = arrowTexture.width;
 	m_height = arrowTexture.height;
 }

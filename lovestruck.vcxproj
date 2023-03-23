@@ -157,6 +157,7 @@
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\powerup.cpp" />
     <ClCompile Include="src\screen.cpp" />
+    <ClCompile Include="src\sound_manager.cpp" />
     <ClCompile Include="src\target.cpp" />
     <ClCompile Include="src\target_spawner.cpp" />
     <ClCompile Include="src\utils.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="src\player.hpp" />
     <ClInclude Include="src\powerup.hpp" />
     <ClInclude Include="src\screen.hpp" />
+    <ClInclude Include="src\sound_manager.hpp" />
     <ClInclude Include="src\target.hpp" />
     <ClInclude Include="src\target_spawner.hpp" />
     <ClInclude Include="src\utils.hpp" />

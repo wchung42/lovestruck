@@ -5,6 +5,7 @@
 #include "player.hpp"
 #include "arrow.hpp"
 #include "target.hpp"
+#include "sound_manager.hpp"
 #include <unordered_map>
 #include <memory>
 #include <random>
@@ -19,15 +20,19 @@ protected:
 	int m_width {};
 	int m_height {};
 	float m_velocity {600.0f};
+	std::shared_ptr<SoundManager> m_soundManager;
 public:
 	PowerUp();
 	PowerUp(
 		raylib::Texture2DUnmanaged texture,
-		raylib::Vector2	pos
+		raylib::Vector2	pos,
+		std::shared_ptr<SoundManager> soundManager
 	);
 	virtual ~PowerUp();
 	void update(float deltaTime);
 	void draw();
+	virtual void onCollision();
+	raylib::Vector2 getPos() { return m_pos; }
 	raylib::Rectangle getCollisionRec();
 };
 
@@ -36,15 +41,16 @@ public:
 class FireRatePowerUp : public PowerUp
 {
 private:
+	std::unique_ptr<Player>& m_player;
 public:
 	FireRatePowerUp(
 		raylib::Texture2DUnmanaged texture,
-		raylib::Vector2 pos
+		raylib::Vector2 pos,
+		std::unique_ptr<Player>& player,
+		std::shared_ptr<SoundManager> m_soundManager
 	);
 	~FireRatePowerUp();
-	void onCollision(
-		std::unique_ptr<Player>& player,
-		std::unordered_map<std::string, Sound>& sounds);
+	void onCollision() override;
 };
 
 
@@ -53,15 +59,16 @@ class FreezePowerUp : public PowerUp
 {
 private:
 	float m_freezeDuration {};
+	std::vector<std::unique_ptr<Target>>& m_targets;
 public:
 	FreezePowerUp(
 		raylib::Texture2DUnmanaged texture,
-		raylib::Vector2 pos
+		raylib::Vector2 pos,
+		std::vector<std::unique_ptr<Target>>& targets,
+		std::shared_ptr<SoundManager> m_soundManager
 	);
 	~FreezePowerUp();
-	void onCollision(
-		std::unique_ptr<std::vector<Target>>& targets,
-		std::unordered_map<std::string, Sound>& sounds);
+	void onCollision() override;
 };
 
 
@@ -70,12 +77,20 @@ class PowerUpSpawner
 {
 private:
 	std::mt19937& m_mt;
-	std::unordered_map<std::string, raylib::Texture2DUnmanaged>& m_textures;
+	std::unordered_map<std::string, raylib::Texture2DUnmanaged> m_textures;
+	std::shared_ptr<SoundManager> m_soundManager;
 	float m_spawnRate {};
 	float m_spawnTimer {};
+
+	// For powerup
+	std::unique_ptr<Player>& m_player;
+	std::vector<std::unique_ptr<Target>>& m_targets;
 public:
 	PowerUpSpawner(
 		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+		std::shared_ptr<SoundManager> m_soundManager,
+		std::unique_ptr<Player>& player,
+		std::vector<std::unique_ptr<Target>>& targets,
 		std::mt19937& mt
 	);
 	~PowerUpSpawner();

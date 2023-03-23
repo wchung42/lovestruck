@@ -3,6 +3,7 @@
 #include "include/raylib.h"
 #include "include/raylib-cpp.hpp"
 #include "screen.hpp"
+#include "sound_manager.hpp"
 #include <string>
 #include <memory>
 #include <unordered_map>
@@ -28,11 +29,9 @@ private:
 	GameScreen m_prevScreen = UNKNOWN;
 
 	// Resource member variables
-	std::unique_ptr<Screen> m_screen;
-	raylib::AudioDevice m_audio;
-	raylib::Music m_backgroundMusic;
-	raylib::Sound m_openingTransitionSound;
-	raylib::Sound m_endingTransitionSound;
+	std::unique_ptr<Screen> m_screen;					// Current screen
+	raylib::AudioDevice m_audio;						// Audio device
+	std::shared_ptr<SoundManager> m_soundManager;		// Sound manager
 	std::unordered_map<std::string, raylib::Texture2DUnmanaged> m_textures;
 	raylib::Font m_font;
 	std::shared_ptr<int> m_score;
