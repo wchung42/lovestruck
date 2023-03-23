@@ -18,7 +18,7 @@ private:
 	int m_width {};
 	int m_height {};
 	float m_velocity {6.0f};
-	std::shared_ptr<Arrow> m_arrow;
+	std::unique_ptr<Arrow> m_arrow;
 	bool m_hasArrow {true};
 	float m_fireRate {0.3f};
 	float m_fireTimer {0.0f};
@@ -36,11 +36,11 @@ private:
 
 public:
 	Player( 
-		raylib::Texture2DUnmanaged& playerAliveTexture,
-		raylib::Texture2DUnmanaged& playerDeadTexture, 
-		raylib::Texture2DUnmanaged& arrowTexture,
-		raylib::Texture2DUnmanaged& m_bowLoadedTexture,
-		raylib::Texture2DUnmanaged& m_bowNotLoadedTexture,
+		const raylib::Texture2DUnmanaged& playerAliveTexture,
+		const raylib::Texture2DUnmanaged& playerDeadTexture, 
+		const raylib::Texture2DUnmanaged& arrowTexture,
+		const raylib::Texture2DUnmanaged& m_bowLoadedTexture,
+		const raylib::Texture2DUnmanaged& m_bowNotLoadedTexture,
 		int maxFrames, 
 		float updateTime
 	);
@@ -56,6 +56,6 @@ public:
 	void update(float deltaTime);
 	void draw();
 	void reload();
-	std::shared_ptr<Arrow> shoot();
-	Rectangle getCollisionRec();
+	std::unique_ptr<Arrow> shoot();
+	raylib::Rectangle getCollisionRec();
 };

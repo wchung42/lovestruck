@@ -17,18 +17,18 @@ private:
 	int m_maxY {};
 	float m_timer {};
 	std::vector<raylib::Texture2DUnmanaged> m_textures;
-
-	std::mt19937 m_mt;
+	std::mt19937& m_mt;
 public:
 	TargetSpawner(
 		float spawnRate,
 		float minSpawnRate,
 		int minY,
 		int maxY,
-		std::vector<raylib::Texture2DUnmanaged>& textures
+		std::vector<raylib::Texture2DUnmanaged>& textures,
+		std::mt19937& mt
 	);
 	~TargetSpawner();
 	raylib::Vector2 calculateSpawnPosition(const raylib::Texture2DUnmanaged& texture, float scale);
-	void spawnTarget(std::unique_ptr<std::vector<std::unique_ptr<Target>>>& targets);
-	void update(float deltaTime, std::unique_ptr<std::vector<std::unique_ptr<Target>>>& targets);
+	void spawnTarget(std::vector<std::unique_ptr<Target>>& targets);
+	void update(float deltaTime, std::vector<std::unique_ptr<Target>>& targets);
 };
