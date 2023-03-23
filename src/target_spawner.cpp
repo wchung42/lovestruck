@@ -5,9 +5,9 @@
 
 TargetSpawner::TargetSpawner(
 	float spawnRate, float minSpawnRate, int minY, int maxY,
-	std::vector<raylib::Texture2DUnmanaged>& textures, std::mt19937& mt
+	std::shared_ptr<TextureManager> textureManager , std::mt19937& mt
 ) :	m_spawnRate(spawnRate), m_minSpawnRate(minSpawnRate),
-	m_minY(minY), m_maxY(maxY), m_textures(textures),
+	m_minY(minY), m_maxY(maxY), m_textureManager(textureManager),
 	m_mt(mt) 
 {
 
@@ -36,22 +36,22 @@ void TargetSpawner::spawnTarget(std::vector<std::unique_ptr<Target>>& targets)
 	if (num <= 59)
 	{	
 		target = std::make_unique<TargetSmall>(
-			calculateSpawnPosition(m_textures[0], 0.3f),
-			m_textures[0],
-			m_textures[3]
+			calculateSpawnPosition(m_textureManager->getTexture("hearts_01"), 0.3f),
+			m_textureManager->getTexture("hearts_01"),
+			m_textureManager->getTexture("hearts_end")
 		);
 	}
 	else if (num >= 60 && num <= 89)
 		target = std::make_unique<TargetMedium>(
-			calculateSpawnPosition(m_textures[1], 0.6f),
-			m_textures[1],
-			m_textures[3]
+			calculateSpawnPosition(m_textureManager->getTexture("hearts_02"), 0.6f),
+			m_textureManager->getTexture("hearts_02"),
+			m_textureManager->getTexture("hearts_end")
 		);
 	else if (num >= 90)
 		target = std::make_unique<TargetLarge>(
-			calculateSpawnPosition(m_textures[2], 1.0f),
-			m_textures[2],
-			m_textures[3]
+			calculateSpawnPosition(m_textureManager->getTexture("hearts_03"), 1.0f),
+			m_textureManager->getTexture("hearts_03"),
+			m_textureManager->getTexture("hearts_end")
 		);
 	targets.push_back(std::move(target));
 }

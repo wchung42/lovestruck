@@ -2,6 +2,7 @@
 
 #include "include/raylib.h"
 #include "include/raylib-cpp.hpp"
+#include "texture_manager.hpp"
 #include "sound_manager.hpp"
 #include "player.hpp"
 #include "arrow.hpp"
@@ -25,13 +26,13 @@ class Screen
 protected:
 	int m_framesCounter {};
 	int m_nextScreen {};
-	std::unordered_map<std::string, raylib::Texture2DUnmanaged> m_textures;
+	std::shared_ptr<TextureManager> m_textureManager;
 	std::shared_ptr<SoundManager> m_soundManager;
 public:
 	Screen();
 	Screen(std::shared_ptr<SoundManager> soundManager);
 	Screen(
-		std::unordered_map<std::string, raylib::Texture2DUnmanaged> textures,
+		std::shared_ptr<TextureManager> textureManager,
 		std::shared_ptr<SoundManager> soundManager
 	);
 	virtual ~Screen();
@@ -95,7 +96,7 @@ private:
 	Button m_quitButton;
 public:
 	TitleScreen(
-		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+		std::shared_ptr<TextureManager> textureManager,
 		std::shared_ptr<SoundManager> soundManager
 	);
 	~TitleScreen();
@@ -127,7 +128,7 @@ private:
 	std::mt19937 m_mt;
 public:
 	GameplayScreen(
-		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+		std::shared_ptr<TextureManager> textureManager,
 		std::shared_ptr<SoundManager> soundManager,
 		const raylib::Font& font,
 		std::shared_ptr<int> score
@@ -193,7 +194,7 @@ private:
 	raylib::Vector2 m_textPos {};
 public:
 	EndingScreen(
-		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+		std::shared_ptr<TextureManager> textureManager,
 		std::shared_ptr<SoundManager> soundManager,
 		const raylib::Font& font,
 		const std::shared_ptr<int> m_score

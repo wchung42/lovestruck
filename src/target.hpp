@@ -27,8 +27,8 @@ protected:
 public:
 	Target(
 		raylib::Vector2 pos,
-		raylib::Texture2DUnmanaged& liveTexture,
-		raylib::Texture2DUnmanaged& endTexture
+		raylib::Texture2DUnmanaged liveTexture,
+		raylib::Texture2DUnmanaged endTexture
 	);
 	~Target();
 	int getWidth() const { return m_width; }
@@ -51,8 +51,8 @@ class TargetSmall : public Target
 public:
 	TargetSmall(
 		Vector2 pos,
-		raylib::Texture2DUnmanaged& activeTexture,
-		raylib::Texture2DUnmanaged& endingTexture
+		raylib::Texture2DUnmanaged activeTexture,
+		raylib::Texture2DUnmanaged endingTexture
 	);
 	~TargetSmall();
 	void onHit();
@@ -65,8 +65,8 @@ class TargetMedium : public Target
 public:
 	TargetMedium(
 		raylib::Vector2 pos,
-		raylib::Texture2DUnmanaged& aliveTexture,
-		raylib::Texture2DUnmanaged& endingTexture
+		raylib::Texture2DUnmanaged aliveTexture,
+		raylib::Texture2DUnmanaged endingTexture
 	);
 	~TargetMedium();
 	void onHit();
@@ -79,8 +79,8 @@ class TargetLarge : public Target
 public:
 	TargetLarge(
 		raylib::Vector2 pos,
-		raylib::Texture2DUnmanaged& activeTexture,
-		raylib::Texture2DUnmanaged& endingTexture
+		raylib::Texture2DUnmanaged activeTexture,
+		raylib::Texture2DUnmanaged endingTexture
 	);
 	~TargetLarge();
 	void onHit();

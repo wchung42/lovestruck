@@ -5,6 +5,7 @@
 #include "player.hpp"
 #include "arrow.hpp"
 #include "target.hpp"
+#include "texture_manager.hpp"
 #include "sound_manager.hpp"
 #include <unordered_map>
 #include <memory>
@@ -77,7 +78,7 @@ class PowerUpSpawner
 {
 private:
 	std::mt19937& m_mt;
-	std::unordered_map<std::string, raylib::Texture2DUnmanaged> m_textures;
+	std::shared_ptr<TextureManager> m_textureManager;
 	std::shared_ptr<SoundManager> m_soundManager;
 	float m_spawnRate {};
 	float m_spawnTimer {};
@@ -87,7 +88,7 @@ private:
 	std::vector<std::unique_ptr<Target>>& m_targets;
 public:
 	PowerUpSpawner(
-		std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+		std::shared_ptr<TextureManager> textureManager,
 		std::shared_ptr<SoundManager> m_soundManager,
 		std::unique_ptr<Player>& player,
 		std::vector<std::unique_ptr<Target>>& targets,

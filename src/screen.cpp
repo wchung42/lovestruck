@@ -1,5 +1,4 @@
 #include "screen.hpp"
-#include "utils.hpp"
 
 //----------------------------------------------------------------------------------
 // Base Screen Function Definitions
@@ -13,9 +12,9 @@ Screen::Screen(std::shared_ptr<SoundManager> soundManager)
 }
 
 Screen::Screen(
-	std::unordered_map<std::string, raylib::Texture2DUnmanaged> textures,
+	std::shared_ptr<TextureManager> textureManager,
 	std::shared_ptr<SoundManager> soundManager
-) 	: m_textures(textures), m_soundManager(soundManager)
+) 	: m_textureManager(textureManager), m_soundManager(soundManager)
 {
 
 }
@@ -189,12 +188,12 @@ void OptionsScreen::DrawScreen()
 // Title Screen Function Definitions
 //----------------------------------------------------------------------------------
 TitleScreen::TitleScreen(
-    std::unordered_map<std::string, raylib::Texture2DUnmanaged>&textures,
+	std::shared_ptr<TextureManager> textureManager,
 	std::shared_ptr<SoundManager> soundManager
-) : Screen(textures, soundManager)
+) : Screen(textureManager, soundManager)
 {
 	// Title 
-	m_titleTexture = m_textures["title"];
+	m_titleTexture = m_textureManager->getTexture("title");
 	m_titlePos = raylib::Vector2 {
 		static_cast<float>((GetScreenWidth() / 2) - (m_titleTexture.width / 2)),
 		static_cast<float>((GetScreenHeight() * 0.4) - (m_titleTexture.height / 1.5))
@@ -202,27 +201,27 @@ TitleScreen::TitleScreen(
 
 	// Player
 	float playerScale {1.0f};
-	m_player = AnimatedObject(m_textures["cupid"], 2, 1.0f / 1.5f, -1, 1, playerScale);
+	m_player = AnimatedObject(m_textureManager->getTexture("cupid"), 2, 1.0f / 1.5f, -1, 1, playerScale);
 
 	// Buttons
 	float buttonOffset {1.0f};
 	float buttonScale {0.8f};
 
-	m_playButtonTexture = m_textures["play_button"];
+	m_playButtonTexture = m_textureManager->getTexture("play_button");
 	raylib::Vector2 playButtonPos = raylib::Vector2 {
 		static_cast<float>(GetScreenWidth() / 2 - (m_playButtonTexture.width * buttonScale / 2)),
 		static_cast<float>(GetScreenHeight() * 0.5f),
 	};
 	m_playButton = Button(playButtonPos, m_playButtonTexture, buttonScale);
 
-	m_creditsButtonTexture = m_textures["credits_button"];
+	m_creditsButtonTexture = m_textureManager->getTexture("credits_button");
 	raylib::Vector2 creditsButtonPos {
 		playButtonPos.x,
 		playButtonPos.y + m_playButton.getHeight() * buttonScale + buttonOffset - 15.0f,
 	};
 	m_creditsButton = Button(creditsButtonPos, m_creditsButtonTexture, buttonScale);
 
-	m_quitButtonTexture = m_textures["quit_button"];
+	m_quitButtonTexture = m_textureManager->getTexture("quit_button");
 	raylib::Vector2 quitButtonPos {
 		creditsButtonPos.x,
 		creditsButtonPos.y + m_creditsButton.getHeight() * buttonScale + buttonOffset - 15.0f,
@@ -276,7 +275,7 @@ void TitleScreen::DrawScreen()
     float deltaTime = GetFrameTime();
     raylib::Vector2 playerPos {
         static_cast<float>(GetScreenWidth() * 0.7f),
-        static_cast<float>((GetScreenHeight() * 0.5f) - m_textures["cupid"].GetHeight())
+        static_cast<float>((GetScreenHeight() * 0.5f) - m_textureManager->getTexture("cupid").GetHeight())
     };
     raylib::Rectangle playerDestRec(
         playerPos.x,
@@ -297,11 +296,11 @@ void TitleScreen::DrawScreen()
 // Gameplay Screen Function Definitions
 //----------------------------------------------------------------------------------
 GameplayScreen::GameplayScreen(
-	std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+	std::shared_ptr<TextureManager> textureManager,
 	std::shared_ptr<SoundManager> soundManager,
 	const raylib::Font& font,
 	std::shared_ptr<int> score
-)	:	Screen(textures, soundManager), m_font(font), m_score(score),
+)	:	Screen(textureManager, soundManager), m_font(font), m_score(score),
 		m_mt(static_cast<unsigned int>(time(nullptr)))
 {
 	// Load sounds
@@ -315,48 +314,42 @@ GameplayScreen::GameplayScreen(
 	// Initialize player
 	Vector2 startPos {0.0f, static_cast<float>(GetScreenHeight() / 2)};
 	m_player = std::make_unique<Player>(
-		m_textures["cupid"],				// Player alive texture
-		m_textures["cupid_end"],			// PLayer dead texture
-		m_textures["arrow"],				// Arrow texture
-		m_textures["bow_loaded"],			// Loaded bow texture
-		m_textures["bow_unloaded"],			// Unloaded bow texture
+		m_textureManager->getTexture("cupid"),				// Player alive texture
+		m_textureManager->getTexture("cupid_end"),			// PLayer dead texture
+		m_textureManager->getTexture("arrow"),				// Arrow texture
+		m_textureManager->getTexture("bow_loaded"),			// Loaded bow texture
+		m_textureManager->getTexture("bow_unloaded"),			// Unloaded bow texture
 		2,									// Max frames
 		1.0f / 1.5f						// Update time
 	);
 
 	// Initialize powerup spawner
-	m_powerupSpawner = std::make_unique<PowerUpSpawner>(m_textures, m_soundManager, m_player, m_targets, m_mt);
+	m_powerupSpawner = std::make_unique<PowerUpSpawner>(m_textureManager, m_soundManager, m_player, m_targets, m_mt);
 
 	// Initialize target spawner
 	float targetSpawnRate {1.5f};								// Base spawn rate
 	float minTargetSpawnRate {0.65f};							// Minimum spawn rate
-	std::vector<raylib::Texture2DUnmanaged> heartTextures {
-		m_textures["hearts_01"],
-		m_textures["hearts_02"],
-		m_textures["hearts_03"],
-		m_textures["heart_end"]
-	};
 	m_targetSpawner = std::make_unique<TargetSpawner>(
-		targetSpawnRate,									// Base spawn rate
-		minTargetSpawnRate,									// Minimum spawn rate
-		m_player->getHeight() / 2,							// Min y player is able to shoot
-		GetScreenHeight() - (m_player->getHeight() / 2),	// Max y player is able to shoot
-		heartTextures,										// Target textures
-		m_mt												// Random num generator
+		targetSpawnRate,										// Base spawn rate
+		minTargetSpawnRate,										// Minimum spawn rate
+		m_player->getHeight() / 2,								// Min y player is able to shoot
+		GetScreenHeight() - (m_player->getHeight() / 2),		// Max y player is able to shoot
+		m_textureManager,										// Target textures
+		m_mt													// Random num generator
 	);
 
 	// Initialize clouds
 	raylib::Vector2 cloudPosition1 {
 		0.0f,
-		static_cast<float>(GetScreenHeight() - m_textures["clouds"].height / 2)
+		static_cast<float>(GetScreenHeight() - m_textureManager->getTexture("clouds").height / 2)
 	};
 
 	raylib::Vector2 cloudPosition2 {
 		static_cast<float>(GetScreenWidth()),
-		static_cast<float>(GetScreenHeight() - m_textures["clouds"].height / 2)
+		static_cast<float>(GetScreenHeight() - m_textureManager->getTexture("clouds").height / 2)
 	};
-	m_clouds.push_back(Cloud(cloudPosition1, m_textures["clouds"]));
-	m_clouds.push_back(Cloud(cloudPosition2, m_textures["clouds"]));
+	m_clouds.push_back(Cloud(cloudPosition1, m_textureManager->getTexture("clouds")));
+	m_clouds.push_back(Cloud(cloudPosition2, m_textureManager->getTexture("clouds")));
 }
 
 
@@ -716,37 +709,37 @@ void CreditsScreen::DrawScreen()
 // Ending Screen Function Definitions
 //----------------------------------------------------------------------------------
 EndingScreen::EndingScreen(
-	std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+	std::shared_ptr<TextureManager> textureManager,
 	std::shared_ptr<SoundManager> soundManager,
 	const raylib::Font& font,
 	std::shared_ptr<int> score
-)	: Screen(textures, soundManager), m_font(font), m_score(score)
+)	: Screen(textureManager, soundManager), m_font(font), m_score(score)
 {
 	// Initialize Player
 	float playerScale {1.0f};
-	m_player = AnimatedObject(m_textures["cupid_end"], 2, 1.0f / 1.0f, 1, 1, playerScale);
+	m_player = AnimatedObject(m_textureManager->getTexture("cupid_end"), 2, 1.0f / 1.0f, 1, 1, playerScale);
 
 	// Initialize buttons
 	float buttonScale {0.8f};
 	float buttonOffset {15.0f};
 
 	raylib::Vector2 playAgainButtonPos {
-		static_cast<float>(GetScreenWidth() / 2 - (m_textures["play_again_button"].width * buttonScale / 2)),
+		static_cast<float>(GetScreenWidth() / 2 - (m_textureManager->getTexture("play_again_button").width * buttonScale / 2)),
 		static_cast<float>(GetScreenHeight() * 0.5f),
 	};
-	m_playAgainButton = Button(playAgainButtonPos, m_textures["play_again_button"], buttonScale);
+	m_playAgainButton = Button(playAgainButtonPos, m_textureManager->getTexture("play_again_button"), buttonScale);
 
 	raylib::Vector2 creditsButtonPos {
 	   playAgainButtonPos.x,
 	   playAgainButtonPos.y + m_playAgainButton.getHeight() * buttonScale - buttonOffset,
 	};
-	m_creditsButton = Button(creditsButtonPos, m_textures["credits_button"], buttonScale);
+	m_creditsButton = Button(creditsButtonPos, m_textureManager->getTexture("credits_button"), buttonScale);
 
 	raylib::Vector2 quitButtonPos {
 		creditsButtonPos.x,
 		creditsButtonPos.y + m_creditsButton.getHeight() * buttonScale - buttonOffset,
 	};
-	m_quitButton = Button(quitButtonPos, m_textures["quit_button"], buttonScale);
+	m_quitButton = Button(quitButtonPos, m_textureManager->getTexture("quit_button"), buttonScale);
 }
 
 

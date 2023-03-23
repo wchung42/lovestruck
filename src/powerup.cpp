@@ -108,12 +108,13 @@ void FreezePowerUp::onCollision()
 
 // Powerup spawner function declarations
 PowerUpSpawner::PowerUpSpawner(
-	std::unordered_map<std::string, raylib::Texture2DUnmanaged>& textures,
+	std::shared_ptr<TextureManager> textureManager,
 	std::shared_ptr<SoundManager> soundManager,
 	std::unique_ptr<Player>& player,
 	std::vector<std::unique_ptr<Target>>& targets,
 	std::mt19937& mt
-) : m_textures(textures), m_soundManager(soundManager), m_player(player), m_targets(targets), m_mt(mt)
+) : m_textureManager(textureManager), m_soundManager(soundManager),
+	m_player(player), m_targets(targets), m_mt(mt)
 {
 	m_spawnRate = 8.0f;		// Spawn powerup every 8 seconds
 }
@@ -152,13 +153,13 @@ std::unique_ptr<PowerUp> PowerUpSpawner::spawnPowerUp()
 	};
 
 	std::unique_ptr<PowerUp> powerup;
-	if (powerUpToSpawn < 49)
+	if (powerUpToSpawn < 69)
 	{
-		powerup = std::make_unique<FireRatePowerUp>(m_textures["firerate_powerup"], spawnPos, m_player, m_soundManager);
+		powerup = std::make_unique<FireRatePowerUp>(m_textureManager->getTexture("firerate_powerup"), spawnPos, m_player, m_soundManager);
 	}
-	else if (powerUpToSpawn >= 50)
+	else if (powerUpToSpawn >= 70)
 	{
-		powerup = std::make_unique<FreezePowerUp>(m_textures["freeze_powerup"], spawnPos, m_targets, m_soundManager);
+		powerup = std::make_unique<FreezePowerUp>(m_textureManager->getTexture("freeze_powerup"), spawnPos, m_targets, m_soundManager);
 	}
 
 	return powerup;
