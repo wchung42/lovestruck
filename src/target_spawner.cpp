@@ -5,7 +5,7 @@
 
 TargetSpawner::TargetSpawner(
 	float spawnRate, float minSpawnRate, int minY, int maxY,
-	std::shared_ptr<TextureManager> textureManager , std::mt19937& mt
+	std::shared_ptr<TextureManager> textureManager , std::shared_ptr<std::mt19937> mt
 ) :	m_spawnRate(spawnRate), m_minSpawnRate(minSpawnRate),
 	m_minY(minY), m_maxY(maxY), m_textureManager(textureManager),
 	m_mt(mt) 
@@ -22,7 +22,7 @@ raylib::Vector2 TargetSpawner::calculateSpawnPosition(const raylib::Texture2DUnm
 {
 	int maxY = GetScreenHeight() - (texture.GetHeight() * scale) - 64; // Screen height - scaled texture height - height of clouds
 	std::uniform_int_distribution<int> distPos(m_minY, maxY);
-	raylib::Vector2 spawnPos {static_cast<float>(GetScreenWidth()), static_cast<float>(distPos(m_mt))};
+	raylib::Vector2 spawnPos {static_cast<float>(GetScreenWidth()), static_cast<float>(distPos(*m_mt))};
 	return spawnPos;
 }
 
@@ -31,7 +31,7 @@ void TargetSpawner::spawnTarget(std::vector<std::unique_ptr<Target>>& targets)
 	// Get random target type to spawn
 	// 60% small, 30% medium, 10% large
 	std::uniform_int_distribution<int> distSpawn(0, 100);
-	int num = distSpawn(m_mt);
+	int num = distSpawn(*m_mt);
 	std::unique_ptr<Target> target {};
 	if (num <= 59)
 	{	
@@ -74,7 +74,7 @@ void TargetSpawner::update(float deltaTime, std::vector<std::unique_ptr<Target>>
 	{
 		// Choose number of targets to spawn (1-3)
 		std::uniform_int_distribution<int> distAmountChance(0, 100);
-		int chance {distAmountChance(m_mt)};
+		int chance {distAmountChance(*m_mt)};
 		int spawnAmount {};
 		if (chance <= 59)
 			spawnAmount = 1;

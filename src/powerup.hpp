@@ -77,7 +77,7 @@ public:
 class PowerUpSpawner
 {
 private:
-	std::mt19937& m_mt;
+	std::shared_ptr<std::mt19937> m_mt;
 	std::shared_ptr<TextureManager> m_textureManager;
 	std::shared_ptr<SoundManager> m_soundManager;
 	float m_spawnRate {};
@@ -92,7 +92,7 @@ public:
 		std::shared_ptr<SoundManager> m_soundManager,
 		std::unique_ptr<Player>& player,
 		std::vector<std::unique_ptr<Target>>& targets,
-		std::mt19937& mt
+		std::shared_ptr<std::mt19937> mt
 	);
 	~PowerUpSpawner();
 	void update(float deltaTime, std::unique_ptr<PowerUp>& powerup);

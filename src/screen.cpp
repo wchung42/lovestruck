@@ -301,7 +301,7 @@ GameplayScreen::GameplayScreen(
 	const raylib::Font& font,
 	std::shared_ptr<int> score
 )	:	Screen(textureManager, soundManager), m_font(font), m_score(score),
-		m_mt(static_cast<unsigned int>(time(nullptr)))
+		m_mt(std::make_shared<std::mt19937>(static_cast<unsigned int>(time(nullptr))))
 {
 	// Load sounds
 	m_soundManager->loadSounds(std::vector<std::string> {
@@ -355,9 +355,7 @@ GameplayScreen::GameplayScreen(
 
 GameplayScreen::~GameplayScreen() 
 {
-	// Unload sounds
-	/*for (auto& sound : m_sounds)
-		sound.Unload();*/
+	
 }
 
 
