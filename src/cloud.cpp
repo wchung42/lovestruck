@@ -2,7 +2,7 @@
 
 Cloud::Cloud() {};
 
-Cloud::Cloud(raylib::Vector2 pos, raylib::Texture2DUnmanaged& texture)
+Cloud::Cloud(raylib::Vector2 pos, raylib::Texture2DUnmanaged texture)
 	: m_pos(pos), m_texture(texture)
 {
 }

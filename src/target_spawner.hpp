@@ -2,6 +2,7 @@
 
 #include "include/raylib.h"
 #include "include/raylib-cpp.hpp"
+#include "texture_manager.hpp"
 #include "target.hpp"
 #include <memory>
 #include <vector>
@@ -16,7 +17,7 @@ private:
 	int m_minY {};
 	int m_maxY {};
 	float m_timer {};
-	std::vector<raylib::Texture2DUnmanaged> m_textures;
+	std::shared_ptr<TextureManager> m_textureManager;
 	std::mt19937& m_mt;
 public:
 	TargetSpawner(
@@ -24,7 +25,7 @@ public:
 		float minSpawnRate,
 		int minY,
 		int maxY,
-		std::vector<raylib::Texture2DUnmanaged>& textures,
+		std::shared_ptr<TextureManager> textureManager,
 		std::mt19937& mt
 	);
 	~TargetSpawner();

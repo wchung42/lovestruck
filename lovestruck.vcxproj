@@ -160,7 +160,7 @@
     <ClCompile Include="src\sound_manager.cpp" />
     <ClCompile Include="src\target.cpp" />
     <ClCompile Include="src\target_spawner.cpp" />
-    <ClCompile Include="src\utils.cpp" />
+    <ClCompile Include="src\texture_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\animated_object.hpp" />
@@ -212,7 +212,7 @@
     <ClInclude Include="src\sound_manager.hpp" />
     <ClInclude Include="src\target.hpp" />
     <ClInclude Include="src\target_spawner.hpp" />
-    <ClInclude Include="src\utils.hpp" />
+    <ClInclude Include="src\texture_manager.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

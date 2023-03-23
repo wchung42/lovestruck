@@ -5,8 +5,8 @@
 // ----------------------------------------------
 Target::Target(
 	raylib::Vector2 pos,
-	raylib::Texture2DUnmanaged& aliveTexture,
-	raylib::Texture2DUnmanaged& endingTexture
+	raylib::Texture2DUnmanaged aliveTexture,
+	raylib::Texture2DUnmanaged endingTexture
 ) : m_pos(pos), m_texture(aliveTexture),
 	m_aliveTexture(aliveTexture), m_endingTexture(endingTexture)
 {
@@ -85,8 +85,8 @@ Rectangle Target::getCollisionRec()
 // ----------------------------------------------
 TargetSmall::TargetSmall(
 	Vector2 pos,
-	raylib::Texture2DUnmanaged& activeTexture,
-	raylib::Texture2DUnmanaged& endingTexture
+	raylib::Texture2DUnmanaged activeTexture,
+	raylib::Texture2DUnmanaged endingTexture
 ) : Target(pos, activeTexture, endingTexture)
 {
 	m_maxFrames = 2;
@@ -110,8 +110,8 @@ void TargetSmall::onHit()
 // ----------------------------------------------
 TargetMedium::TargetMedium(
 	raylib::Vector2 pos,
-	raylib::Texture2DUnmanaged& aliveTexture,
-	raylib::Texture2DUnmanaged& endingTexture
+	raylib::Texture2DUnmanaged aliveTexture,
+	raylib::Texture2DUnmanaged endingTexture
 ) : Target(pos, aliveTexture, endingTexture)
 {
 	m_maxFrames = 3;
@@ -136,8 +136,8 @@ void TargetMedium::onHit()
 // ----------------------------------------------
 TargetLarge::TargetLarge(
 	raylib::Vector2 pos,
-	raylib::Texture2DUnmanaged& aliveTexture,
-	raylib::Texture2DUnmanaged& endingTexture
+	raylib::Texture2DUnmanaged aliveTexture,
+	raylib::Texture2DUnmanaged endingTexture
 ) : Target(pos, aliveTexture, endingTexture)
 {
 	m_maxFrames = 4;

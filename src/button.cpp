@@ -4,7 +4,7 @@ Button::Button() {}
 
 Button::Button(
 	raylib::Vector2 pos,
-	raylib::Texture2DUnmanaged& texture,
+	raylib::Texture2DUnmanaged texture,
 	float scale
 ) : m_pos(pos), m_texture(texture), m_scale(scale)
 {

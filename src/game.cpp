@@ -1,7 +1,5 @@
 #include "game.hpp"
 #include "screen.hpp"
-#include "sound_manager.hpp"
-#include "utils.hpp"
 #include <memory>
 
 Game::Game() {}
@@ -21,8 +19,9 @@ void Game::Initialize()
     m_window.SetTargetFPS(m_targetFPS);       // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
+    m_textureManager = std::make_shared<TextureManager>();
     // Load textures
-    utils::initializeTextures({
+    m_textureManager->loadTextures({
         "./src/resources/textures/cupid.png",
         "./src/resources/textures/bow_loaded.png",
         "./src/resources/textures/bow_unloaded.png",
@@ -41,7 +40,7 @@ void Game::Initialize()
         "./src/resources/textures/back_button.png",
         "./src/resources/textures/firerate_powerup.png",
         "./src/resources/textures/freeze_powerup.png"
-    }, m_textures);
+    });
 
     // Load font
     m_font = raylib::Font("./src/resources/fonts/SimpleHandmade.ttf", 64);
@@ -78,12 +77,6 @@ void Game::RunLoop()
 
 void Game::Shutdown()
 {
-    // Unload resources
-    for (auto& [name, texture] : m_textures)
-        texture.Unload();
-
-    //m_openingTransitionSound.Unload();
-    //m_endingTransitionSound.Unload();
 	m_window.Close();
 }
 
@@ -230,20 +223,20 @@ void Game::ChangeToScreen(GameScreen screen)
         } break;
         case TITLE:
         {
-            m_screen = std::make_unique<TitleScreen>(m_textures, m_soundManager);
+            m_screen = std::make_unique<TitleScreen>(m_textureManager, m_soundManager);
         } break;
         case GAMEPLAY: 
         {
             *m_score = 0;
-            m_screen = std::make_unique<GameplayScreen>(m_textures, m_soundManager, m_font, m_score);
+            m_screen = std::make_unique<GameplayScreen>(m_textureManager, m_soundManager, m_font, m_score);
         } break;
         case CREDITS:
         {
-            m_screen = std::make_unique<CreditsScreen>(m_soundManager, m_font, m_textures["back_button"], m_prevScreen);
+            m_screen = std::make_unique<CreditsScreen>(m_soundManager, m_font, m_textureManager->getTexture("back_button"), m_prevScreen);
         } break;
         case ENDING: 
         {
-            m_screen = std::make_unique<EndingScreen>(m_textures, m_soundManager, m_font, m_score);
+            m_screen = std::make_unique<EndingScreen>(m_textureManager, m_soundManager, m_font, m_score);
         } break;
         default: break;
     }
@@ -285,20 +278,20 @@ void Game::UpdateTransition()
                 } break;
                 case TITLE:
                 {
-                    m_screen = std::make_unique<TitleScreen>(m_textures, m_soundManager);
+                    m_screen = std::make_unique<TitleScreen>(m_textureManager, m_soundManager);
                 } break;
                 case GAMEPLAY:
                 {
                     *m_score = 0;
-                    m_screen = std::make_unique<GameplayScreen>(m_textures, m_soundManager, m_font, m_score);
+                    m_screen = std::make_unique<GameplayScreen>(m_textureManager, m_soundManager, m_font, m_score);
                 } break;
                 case CREDITS:
                 {
-                    m_screen = std::make_unique<CreditsScreen>(m_soundManager, m_font, m_textures["back_button"], m_prevScreen);
+                    m_screen = std::make_unique<CreditsScreen>(m_soundManager, m_font, m_textureManager->getTexture("back_button"), m_prevScreen);
                 } break;
                 case ENDING:
                 {
-                    m_screen = std::make_unique<EndingScreen>(m_textures, m_soundManager, m_font, m_score);
+                    m_screen = std::make_unique<EndingScreen>(m_textureManager, m_soundManager, m_font, m_score);
                 } break;
                 default: break;
             }
